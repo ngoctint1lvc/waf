@@ -1,0 +1,3 @@
+[submodule "openresty/openresty/lua-resty-waf"]
+	path = openresty/openresty/lua-resty-waf
+	url = https://github.com/p0pr0ck5/lua-resty-waf

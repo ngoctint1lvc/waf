@@ -1,0 +1,110 @@
+=encoding utf-8
+
+
+=head1 lua-resty-iputils
+
+
+Collection of utility functions for working with IP addresses.
+
+
+=head1 Overview
+
+
+
+    init_by_lua_block {
+      local iputils = require("resty.iputils")
+      iputils.enable_lrucache()
+      local whitelist_ips = {
+          "127.0.0.1",
+          "10.10.10.0/24",
+          "192.168.0.0/16",
+      }
+    
+      -- WARNING: Global variable, recommend this is cached at the module level
+      -- https://github.com/openresty/lua-nginx-module#data-sharing-within-an-nginx-worker
+      whitelist = iputils.parse_cidrs(whitelist_ips)
+    }
+    
+    access_by_lua_block {
+        local iputils = require("resty.iputils")
+        if not iputils.ip_in_cidrs(ngx.var.remote_addr, whitelist) then
+          return ngx.exit(ngx.HTTP_FORBIDDEN)
+        end
+    }
+
+
+=head1 Methods
+
+
+=head3 enable_lrucache
+
+C<syntax: ok, err = iputils.enable_lrucache(size?)>
+
+Creates a global lrucache object for caching ip2bin lookups.
+
+Size is optional and defaults to 4000 entries (~1MB per worker)
+
+Calling this repeatedly will reset the cache
+
+
+=head3 ip2bin
+
+C<syntax: bin_ip, bin_octets = iputils.ip2bin(ip)>
+
+Returns the binary representation of an IPv4 address and a table containing the binary representation of each octet
+
+Returns C<nil> and and error message for bad IPs
+
+
+=head3 parse_cidr
+
+C<syntax: lower, upper = iputils.parse_cidr(cidr)>
+
+Returns a binary representation of the lowest (network) and highest (broadcast) addresses of an IPv4 network.
+
+
+=head3 parse_cidrs
+
+C<syntax: parsed = iputils.parse_cidrs(cidrs)>
+
+Takes a table of CIDR format IPV4 networks and returns a table of tables containg the lower and upper addresses.
+
+If an invalid network is in the table an error is logged and the other networks are returned
+
+
+=head3 ip_in_cidrs
+
+C<syntax: bool, err = iputils.ip_in_cidrs(ip, cidrs)>
+
+Takes a string IPv4 address and a table of parsed CIDRs (e.g. from C<iputils.parse_cidrs>).
+
+Returns a C<true> or C<false> if the IP exists within I<any> of the specified networks.
+
+Returns C<nil> and an error message with an invalid IP
+
+
+=head3 binip_in_cidrs
+
+C<syntax: bool, err = iputils.binip_in_cidrs(bin_ip, cidrs)>
+
+Takes a nginx binary IPv4 address (e.g. C<ngx.var.binary_remote_addr>) and a table of parsed CIDRs (e.g. from C<iputils.parse_cidrs>).
+
+This method is much faster than C<ip_in_cidrs()> if the IP being checked is already available as a binary representation.
+
+Returns a C<true> or C<false> if the IP exists within I<any> of the specified networks.
+
+Returns C<nil> and an error message with an invalid IP
+
+
+=head2 TODO
+
+
+=over
+
+
+=item *
+
+IPv6 support - Alternative library supporting ipv6 - L<lua-libcidr-ffi|https://github.com/GUI/lua-libcidr-ffi>
+
+=back
+

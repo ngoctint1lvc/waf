@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  openresty:
+    build:
+      context: ./openresty
+      dockerfile: Dockerfile
+    container_name: openresty
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./openresty/etc/supervisor:/etc/supervisor"
+      - "./openresty/etc/openresty:/usr/local/openresty"
+  dvwa:
+    image: vulnerables/web-dvwa
+    container_name: dvwa
+    ports:
+      - "8080:80"

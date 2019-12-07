@@ -1,0 +1,134 @@
+=encoding utf-8
+
+
+=head1 Name
+
+lua-resty-libinjection - LuaJIT FFI bindings for libinjection
+
+
+=head1 Status
+
+This library is in active development and is production ready
+
+
+=head1 Description
+
+This library provides FFI bindings for L<libinjection|https://github.com/client9/libinjection/>, a SQL/SQLi and XSS tokenizer and analyzer.
+
+
+=head1 Installation
+
+Install this library as you would any other OpenResty lua module. The libinjection shared object file is required to live in your L<lua_package_cpath|https://github.com/openresty/lua-nginx-module#lua_package_cpath>, so you should symlink or copy the .so file to the appropriate location.
+
+
+=head1 Synopsis
+
+
+      access_by_lua_block {
+        local libinjection = require "resty.libinjection"
+    
+        -- simple SQLi API
+        local issqli, fingerprint = libinjection.sqli(string)
+    
+        -- context-specific bindings are also provided
+        issqli, fingerprint = libinjection.sqli_noquote(string)
+        issqli, fingerprint = libinjection.sqli_singlequote(string)
+        issqli, fingerprint = libinjection.sqli_doublequote(string)
+    
+    	--simple XSS API
+    	local isxss = libinjection.xss(string)
+    
+    	-- context-specific bindings
+    	isxss = libinjection.xss_data_state(string)
+    	isxss = libinjection.xss_noquote(string)
+    	isxss = libinjection.xss_singlequote(string)
+    	isxss = libinjection.xss_doublequote(string)
+    	isxss = libinjection.xss_backquote(string)
+      }
+
+
+=head1 Usage
+
+
+=head2 libinjection.sqli
+
+B<syntax>: I<issqli, fingerprint = libinjection.sqli(string)>
+
+Given a string, returns a boolean I<issqli> representing if SQLi was detected, and a string I<fingerprint> representing the libinjection fingerprint detected. In most cases, this is the preferable option; second-level API bindings noted below may be slightly more efficient in specific contexts.
+
+
+=head2 libinjection.sqli_noquote
+
+B<syntax>: I<issqli, fingerprint = libinjection.sqli_noquote(string)>
+
+Like L<libinjection.sqli>, in the specific context of an "as-is" string.
+
+
+=head2 libinjection.sqli_singlequote
+
+B<syntax>: I<issqli, fingerprint = libinjection.sqli_singlequote(string)>
+
+Like L<libinjection.sqli>, in the specific context of a single-quoted (C<'>) string.
+
+
+=head2 libinjection.sqli_doublequote
+
+B<syntax>: I<issqli, fingerprint = libinjection.sqli_doublelequote(string)>
+
+Like L<libinjection.sqli>, in the specific context of a double-quoted (C<">) string.
+
+
+=head2 libinjection.xss
+
+B<syntax>: I<isxss = libinjection.xss(string)>
+
+ALPHA version of XSS detector. Given a string, returns a boolean I<isxss> denoting if XSS was detected. In most cases, this is the preferable option; second-level API bindings noted below may be slight more efficient in specific contexts.
+
+
+=head2 libinjection.xss_data_state
+
+B<syntax>: I<isxss = libinjection.xss_data_state(string)>
+
+Like L<libinjection.xss>, but run with only the DATA_STATE flag.
+
+
+=head2 libinjection.xss_noquote
+
+B<syntax>: I<isxss = libinjection.xss_noquote(string)>
+
+Like L<libinjection.xss>, but run with only the VALUE_NO_QUOTE flag.
+
+
+=head2 libinjection.xss_singlequote
+
+B<syntax>: I<isxss = libinjection.xss_singlequote(string)>
+
+Like L<libinjection.xss>, but run with only the VALUE_SINGLE_QUOTE flag.
+
+
+=head2 libinjection.xss_doublequote
+
+B<syntax>: I<isxss = libinjection.xss_doublequote(string)>
+
+Like L<libinjection.xss>, but run with only the VALUE_DOUBLE_QUOTE flag.
+
+
+=head2 libinjection.xss_backquote
+
+B<syntax>: I<isxss = libinjection.xss_backquote(string)>
+
+Like L<libinjection.xss>, but run with only the VALUE_BACK_QUOTE flag.
+
+
+=head1 License
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/
+
+
+=head1 Bugs
+
+Please report bugs by creating a ticket with the GitHub issue tracker.
