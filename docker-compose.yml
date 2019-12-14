@@ -11,8 +11,12 @@ services:
     volumes:
       - "./openresty/etc/supervisor:/etc/supervisor"
       - "./openresty/etc/openresty/nginx/conf:/usr/local/openresty/nginx/conf"
-  dvwa:
+      - "./openresty/etc/openresty/nginx/html:/usr/local/openresty/nginx/html"
+      - "./openresty/etc/modsecurity/modsecurity.conf:/etc/modsecurity/modsecurity.conf"
+      - "./openresty/etc/modsecurity-crs:/opt/owasp-modsecurity-crs"
+  dvwa-test:
     image: vulnerables/web-dvwa
-    container_name: dvwa
-    ports:
-      - "8080:80"
+    container_name: dvwa-test
+  nginx-test:
+    image: nginx:1.17.6
+    container_name: nginx-test

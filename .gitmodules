@@ -1,3 +1,9 @@
-[submodule "openresty/openresty/lua-resty-waf"]
-	path = openresty/openresty/lua-resty-waf
-	url = https://github.com/p0pr0ck5/lua-resty-waf
+[submodule "openresty/owasp-modsecurity-crs"]
+	path = openresty/owasp-modsecurity-crs
+	url = https://github.com/SpiderLabs/owasp-modsecurity-crs.git
+[submodule "openresty/ModSecurity"]
+	path = openresty/ModSecurity
+	url = https://github.com/SpiderLabs/ModSecurity
+[submodule "openresty/ModSecurity-nginx"]
+	path = openresty/ModSecurity-nginx
+	url = https://github.com/SpiderLabs/ModSecurity-nginx
