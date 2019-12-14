@@ -7,3 +7,6 @@
 [submodule "openresty/ModSecurity-nginx"]
 	path = openresty/ModSecurity-nginx
 	url = https://github.com/SpiderLabs/ModSecurity-nginx
+[submodule "test-waf"]
+	path = test-waf
+	url = https://github.com/ngoctint1lvc/test-waf.git
