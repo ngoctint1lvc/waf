@@ -16,6 +16,7 @@ COPY ./ModSecurity /opt/ModSecurity
 COPY ./ModSecurity-nginx /opt/ModSecurity-nginx
 
 RUN (cd /opt/ModSecurity && \
+    git checkout v3.0.3 && \
     sh build.sh && \
     git submodule init && \
     git submodule update && \
@@ -33,7 +34,7 @@ RUN (cd openresty-1.15.8.2 && \
 
 ENV PATH="/usr/local/openresty/bin:/usr/local/openresty/nginx/sbin:${PATH}"
 
-RUN mkdir -p /etc/modsecurity && mkdir -p /var/log/modsecurity && \
+RUN mkdir -p /etc/modsecurity && \
     cp /opt/ModSecurity/unicode.mapping /etc/modsecurity/unicode.mapping
 
 # clean files
