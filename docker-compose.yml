@@ -1,6 +1,7 @@
-version: '3.7'
+version: "3.7"
 services:
   openresty:
+    container_name: resty
     build:
       context: ./openresty
       dockerfile: Dockerfile
@@ -17,6 +18,13 @@ services:
   dvwa-test:
     image: vulnerables/web-dvwa
     container_name: dvwa-test
+    volumes:
+      - "dvwa-db:/var/lib/mysql"
   nginx-test:
     image: nginx:1.17.6
     container_name: nginx-test
+    volumes:
+      - "./nginx-test/conf:/etc/nginx"
+      - "./nginx-test/html:/usr/share/nginx/html"
+volumes:
+  dvwa-db:

@@ -1,12 +1,9 @@
 [submodule "openresty/owasp-modsecurity-crs"]
-	path = openresty/owasp-modsecurity-crs
-	url = https://github.com/SpiderLabs/owasp-modsecurity-crs.git
+path = openresty/owasp-modsecurity-crs
+url = https://github.com/SpiderLabs/owasp-modsecurity-crs.git
 [submodule "openresty/ModSecurity"]
-	path = openresty/ModSecurity
-	url = https://github.com/SpiderLabs/ModSecurity
+path = openresty/ModSecurity
+url = git@github.com:ngoctint1lvc/ModSecurity.git
 [submodule "openresty/ModSecurity-nginx"]
-	path = openresty/ModSecurity-nginx
-	url = https://github.com/SpiderLabs/ModSecurity-nginx
-[submodule "test-waf"]
-	path = test-waf
-	url = https://github.com/ngoctint1lvc/test-waf.git
+path = openresty/ModSecurity-nginx
+url = git@github.com:ngoctint1lvc/ModSecurity-nginx.git
