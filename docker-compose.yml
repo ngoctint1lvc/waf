@@ -15,6 +15,7 @@ services:
       - "./openresty/etc/openresty/nginx/html:/usr/local/openresty/nginx/html"
       - "./openresty/etc/modsecurity/modsecurity.conf:/etc/modsecurity/modsecurity.conf"
       - "./openresty/etc/modsecurity-crs:/opt/owasp-modsecurity-crs"
+      - "./openresty/logs:/usr/local/openresty/nginx/logs"
   dvwa-test:
     image: vulnerables/web-dvwa
     container_name: dvwa-test
