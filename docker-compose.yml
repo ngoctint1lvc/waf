@@ -28,7 +28,9 @@ services:
     volumes:
       - "dvwa-db:/var/lib/mysql"
   nginx-test:
-    image: nginx:1.17.6
+    build:
+      context: ./nginx-test
+      dockerfile: Dockerfile
     container_name: nginx-test
     volumes:
       - "./nginx-test/conf:/etc/nginx"
