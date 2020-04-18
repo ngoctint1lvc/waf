@@ -1,21 +1,27 @@
 version: "3.7"
 services:
   openresty:
-    container_name: resty
+    container_name: openresty
     build:
       context: ./openresty
       dockerfile: Dockerfile
-    container_name: openresty
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - "./openresty/etc/supervisor:/etc/supervisor"
-      - "./openresty/etc/openresty/nginx/conf:/usr/local/openresty/nginx/conf"
-      - "./openresty/etc/openresty/nginx/html:/usr/local/openresty/nginx/html"
+      - "./openresty/etc/nginx/conf:/usr/local/openresty/nginx/conf"
+      - "./openresty/etc/nginx/html:/usr/local/openresty/nginx/html"
       - "./openresty/etc/modsecurity/modsecurity.conf:/etc/modsecurity/modsecurity.conf"
       - "./openresty/etc/modsecurity-crs:/opt/owasp-modsecurity-crs"
       - "./openresty/logs:/usr/local/openresty/nginx/logs"
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    ulimits:
+      core: -1
+    privileged: true
   dvwa-test:
     image: vulnerables/web-dvwa
     container_name: dvwa-test
