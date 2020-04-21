@@ -21,7 +21,6 @@ services:
       - seccomp:unconfined
     ulimits:
       core: -1
-    privileged: true
   dvwa-test:
     image: vulnerables/web-dvwa
     container_name: dvwa-test

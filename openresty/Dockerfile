@@ -17,14 +17,14 @@ RUN (wget http://github.com/lloyd/yajl/zipball/2.1.0 -O yajl.zip && \
     unzip yajl.zip && mv lloyd* yajl && rm yajl.zip && \
     cd yajl && ./configure && make && make install)
 
-RUN git clone --depth=1 https://github.com/ngoctint1lvc/ModSecurity.git /opt/ModSecurity
+RUN git clone --depth=1 -b thesis https://github.com/ngoctint1lvc/ModSecurity.git /opt/ModSecurity
 
 RUN git clone --depth=1 https://github.com/ngoctint1lvc/ModSecurity-nginx.git /opt/ModSecurity-nginx
 
 # download and install lua
 RUN apt-get update && \
     apt-get -y install lua5.1 liblua5.1-dev && \
-    ln -s /usr/bin/lua5.1 /usr/bin/lua
+    ln -sf /usr/bin/lua5.1 /usr/bin/lua
 
 RUN (cd /opt/ModSecurity && \
     sh build.sh && \
@@ -55,10 +55,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata && \
     ln -fs /usr/share/zoneinfo/UTC /etc/localtime
 
 # debug tools
-RUN apt-get install bfs gdb && \
+RUN apt-get install -y bfs gdb && \
     (cd /root && git clone https://github.com/pwndbg/pwndbg && \
-    cd pwndbg && \
-    ./setup.sh)
+    cd pwndbg && ./setup.sh)
+
+# install fish vim and change default shell to fish
+RUN apt-get install -y fish vim && \
+    chsh -s /usr/bin/fish
 
 COPY run.sh /run.sh
 

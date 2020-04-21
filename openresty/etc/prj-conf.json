@@ -1,0 +1,11 @@
+[
+    "/usr/local/openresty/",
+    "/usr/local/openresty/*",
+    "/usr/local/openresty/*/*",
+    "/usr/local/openresty/*/*/*",
+    "/root/*",
+    "/root/*/*",
+    "/root/*/*/*",
+    "/opt/*",
+    "/opt/*/*"
+]

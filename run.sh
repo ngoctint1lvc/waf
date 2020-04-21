@@ -5,5 +5,5 @@ if [ "$1" = 'nginx' ]; then
 elif [ "$1" = 'dvwa' ]; then
 	docker-compose exec dvwa-test bash -c '(cd /var/log/apache2/ && bash)'
 else
-	docker-compose exec openresty bash -c '(cd /usr/local/openresty/nginx/logs && bash)'
+	docker-compose exec openresty bash -c '(cd /usr/local/openresty/nginx/logs && fish)'
 fi 
