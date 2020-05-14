@@ -38,6 +38,7 @@ RUN (cd openresty-1.15.8.2 && \
     ./configure -j4 \
     --with-pcre-jit \
     --with-compat \
+    --with-debug \
     --add-dynamic-module=/opt/ModSecurity-nginx && \
     make -j4 && \
     make install)
@@ -58,6 +59,21 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata && \
 RUN apt-get install -y bfs gdb && \
     (cd /root && git clone https://github.com/pwndbg/pwndbg && \
     cd pwndbg && ./setup.sh)
+
+# install lua-mongo
+RUN apt-get install -y luarocks && \
+    (cd /opt && wget https://github.com/mongodb/mongo-c-driver/releases/download/1.16.2/mongo-c-driver-1.16.2.tar.gz && \
+    tar -axf mongo-c-driver-1.16.2.tar.gz && \
+    rm mongo-c-driver-1.16.2.tar.gz && \
+    cd mongo-c-driver-1.16.2 && \
+    mkdir cmake-build && \
+    cd cmake-build && \
+    cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF .. && \
+    make install -j4) && \
+    luarocks install lua-mongo
+
+# update
+RUN luarocks install lua-cjson
 
 # install fish vim and change default shell to fish
 RUN apt-get install -y fish vim && \

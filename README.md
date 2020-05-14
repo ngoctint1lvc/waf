@@ -21,8 +21,17 @@ Clone this project and start all docker services. Two images for testing includi
 ```
 git clone https://github.com/ngoctint1lvc/waf.git
 cd waf/
-chmod +x dev.sh
-./dev.sh
+```
+
+Add 2 local dns record to your host files
+```
+127.0.0.1 dvwa.test
+127.0.0.1 nginx.test
+```
+
+Start all containers
+```
+docker-compose up -d
 ```
 
 To quickly spawn a shell into docker services, run those commands
