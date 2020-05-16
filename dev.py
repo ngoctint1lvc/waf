@@ -7,6 +7,7 @@ import sys
 from urllib.parse import quote_plus
 
 cmd = 'help' if len(sys.argv) < 2 else sys.argv[1]
+args = sys.argv[2:]
 
 if cmd == 'init':
     exit_code = os.system("docker-compose up -d")
@@ -33,14 +34,23 @@ elif cmd == 'init-terminal':
 elif cmd == 'reload':
     os.system('docker-compose exec openresty nginx -s reload')
 elif cmd == 'attack':
-    os.system('curl -v http://nginx.test?x=' + quote_plus('; cat /etc/passwd'))
+    os.system('curl -ik https://tin.acbpro.com?x=' + quote_plus('; cat /etc/passwd'))
 elif cmd == 'log':
     os.system('docker-compose logs -f --tail 100 openresty')
 elif cmd == 'rebuild-modsec':
-    bash_cmd = 'cd /opt/ModSecurity && make -j4 && make install && supervisorctl restart all'
+    bash_cmd = 'cd /opt/ModSecurity && git pull && make -j4 && make install && supervisorctl restart all'
     os.system("docker-compose exec openresty bash -c '{}'".format(bash_cmd))
 elif cmd == 'restart':
     os.system('docker-compose exec openresty supervisorctl restart all')
+elif cmd == 'gen-ssl':
+    os.system('mkcert -cert-file ./openresty/etc/nginx/ssl/localhost.pem -key-file ./openresty/etc/nginx/ssl/localhost-key.pem ' + ' '.join(args))
+    os.system('docker-compose exec openresty nginx -s reload')
+elif cmd == 'test':
+    url = args[0] if len(args) >= 1 else 'https://medium.com'
+    os.system('curl -ik {}'.format(url))
+elif cmd == 'update-dns':
+    os.system('sudo cp ./openresty/dnsmasq.conf /etc/dnsmasq.d/custom.conf')
+    os.system('sudo service dnsmasq restart')
 else:
     print('''\
 Command list:
@@ -49,5 +59,8 @@ init-terminal
 reload
 attack
 log
+test [url]
+gen-ssl
 rebuild-modsec
+update-dns
 restart''')

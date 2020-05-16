@@ -1,10 +1,10 @@
-package.path = package.path .. ";/opt/owasp-modsecurity-crs/?.lua"
+package.path = package.path .. ";/opt/owasp-modsecurity-crs/lua-scripts/?.lua"
 local util = require("util")
 
 function main()
     util.waf_debug(m, "Starting script execution")
     local rules = m.getTriggeredRules()
-    util.waf_debug(m, "triggered rules", util.print_table(rules))
+    util.waf_debug(m, "triggered rules", rules)
     util.waf_debug(m, "lua package path", package.path)
 
     local num_rules = #rules

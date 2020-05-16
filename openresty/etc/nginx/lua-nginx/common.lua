@@ -1,7 +1,27 @@
-local cjson = require("cjson")
-local util = {}
+local _M = {}
 
-function util.print_table(node)
+function _M.debug(...)
+    if not os.getenv("DEBUG") then
+        return
+    end
+
+    local args = {...}
+    if #args > 1 then
+        local tag, msg = args[1], args[2]
+        if type(msg) == 'table' then
+            msg = print_table(msg)
+        end
+        print("[RESTY][" .. tag .. "] " .. msg)
+    else
+        local msg = args[1]
+        if type(msg) == 'table' then
+            msg = _M.print_table(msg)
+        end
+        print("[RESTY] " .. msg)
+    end
+end
+
+function _M.print_table(node)
     local cache, stack, output = {}, {}, {}
     local depth = 1
     local output_str = "{\n"
@@ -79,62 +99,4 @@ function util.print_table(node)
     return output_str
 end
 
-function util.tablelength(T)
-    local count = 0
-    for _ in pairs(T) do
-        count = count + 1
-    end
-    return count
-end
-
-local char_to_hex = function(c)
-    return string.format("%%%02X", string.byte(c))
-end
-
-function util.urlencode(url)
-    if url == nil then
-        return
-    end
-    url = url:gsub("\n", "\r\n")
-    url = url:gsub("([^%w ])", char_to_hex)
-    url = url:gsub(" ", "+")
-    return url
-end
-
-function util.waf_debug(m, ...)
-    local arg = {...}
-
-    -- m.log(9, "[WAF][args] Num of arguments: " .. tostring(#arg))
-
-    if #arg >= 2 then
-        local tag, msg = arg[1], arg[2]
-        m.log(9, "[WAF][" .. tag .. "] " .. msg)
-    elseif #arg == 1 then
-        local msg = arg[1]
-        m.log(9, "[WAF] " .. msg)
-    else
-        m.log(9, "[WAF] Empty message")
-    end
-end
-
-function util.strtohex(str)
-    if type(str) ~= 'string' then
-        return str
-    end
-
-    return (str:gsub('.', function (c)
-        return string.format('%02X', string.byte(c))
-    end))
-end
-
-function util.hextostr(str)
-    if type(str) ~= 'string' then
-        return str
-    end
-
-    return (str:gsub('..', function (cc)
-        return string.char(tonumber(cc, 16))
-    end))
-end
-
-return util
+return _M

@@ -6,16 +6,21 @@ services:
       context: ./openresty
       dockerfile: Dockerfile
     ports:
-      - "80:80"
-      - "443:443"
+      - 127.0.0.1:80:80
+      - 127.0.0.1:443:443
     volumes:
       - "./openresty/etc/supervisor:/etc/supervisor"
       - "./openresty/etc/nginx/conf:/usr/local/openresty/nginx/conf"
       - "./openresty/etc/nginx/html:/usr/local/openresty/nginx/html"
+      - "./openresty/etc/nginx/lua-nginx:/usr/local/openresty/nginx/lua-nginx"
+      - "./openresty/etc/nginx/ssl:/usr/local/openresty/nginx/ssl"
       - "./openresty/etc/modsecurity.conf:/etc/modsecurity/modsecurity.conf"
       - "./openresty/etc/modsecurity-crs:/opt/owasp-modsecurity-crs"
-      - "./openresty/logs:/usr/local/openresty/nginx/logs"
+      - "./openresty/run.sh:/run.sh"
       - "vscode:/root/.vscode-server"
+      - "modsecurity-vscode-settings:/opt/ModSecurity/.vscode"
+      - "modsec-cache:/usr/local/modsecurity"
+      - "nginx-module-cache:/usr/local/openresty/nginx/modules"
     cap_add:
       - SYS_PTRACE
     security_opt:
@@ -26,6 +31,8 @@ services:
       MONGODB_SERVER: "${MONGODB_SERVER}"
       MONGODB_USER: "${MONGO_INITDB_ROOT_USERNAME}"
       MONGODB_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+      DEBUG: "${DEBUG}"
+    restart: always
   dvwa-test:
     image: vulnerables/web-dvwa
     container_name: dvwa-test
@@ -46,16 +53,20 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
     volumes:
       - "log-db:/data/db"
+    restart: always
   log-db-viewer:
     image: mongo-express
-    restart: always
     ports:
       - 127.0.0.1:8081:8081
     environment:
       ME_CONFIG_MONGODB_SERVER: "${MONGODB_SERVER}"
       ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
       ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+    restart: always
 volumes:
   dvwa-db:
   log-db:
   vscode:
+  modsec-cache:
+  nginx-module-cache:
+  modsecurity-vscode-settings:

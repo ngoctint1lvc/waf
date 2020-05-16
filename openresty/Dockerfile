@@ -34,12 +34,20 @@ RUN (cd /opt/ModSecurity && \
     make -j4 && \
     make install)
 
-RUN (cd openresty-1.15.8.2 && \
+RUN (cd /opt && \
+    wget https://github.com/chobits/ngx_http_proxy_connect_module/archive/v0.0.1.tar.gz -O /opt/ngx_proxy_connect.tar.gz && \
+    tar -axf ngx_proxy_connect.tar.gz) && \
+    (cd openresty-1.15.8.2 && \
     ./configure -j4 \
     --with-pcre-jit \
     --with-compat \
+    --with-http_ssl_module \
+    --with-http_realip_module \
     --with-debug \
-    --add-dynamic-module=/opt/ModSecurity-nginx && \
+    --add-dynamic-module=/opt/ModSecurity-nginx \
+    --add-dynamic-module=/opt/ngx_http_proxy_connect_module-0.0.1 && \
+    wget https://raw.githubusercontent.com/chobits/ngx_http_proxy_connect_module/master/patch/proxy_connect_rewrite_101504.patch -O patches/proxy_connect_rewrite.patch && \
+    patch -d build/nginx-1.15.8/ -p1 < patches/proxy_connect_rewrite.patch && \
     make -j4 && \
     make install)
 
@@ -70,10 +78,8 @@ RUN apt-get install -y luarocks && \
     cd cmake-build && \
     cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF .. && \
     make install -j4) && \
+    luarocks install lua-cjson && \
     luarocks install lua-mongo
-
-# update
-RUN luarocks install lua-cjson
 
 # install fish vim and change default shell to fish
 RUN apt-get install -y fish vim && \

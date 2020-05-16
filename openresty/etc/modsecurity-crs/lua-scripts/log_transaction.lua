@@ -1,4 +1,4 @@
-package.path = package.path .. ";/opt/owasp-modsecurity-crs/?.lua"
+package.path = package.path .. ";/opt/owasp-modsecurity-crs/lua-scripts/?.lua"
 local util = require("util")
 local cjson = require("cjson")
 
@@ -17,13 +17,13 @@ function main()
     for i, header in ipairs(m.getvars("REQUEST_HEADERS")) do
         request_headers[header.name:sub(#"REQUEST_HEADERS:" + 1)] = header.value
     end
-    util.waf_debug(m, "headers", util.print_table(request_headers))
+    util.waf_debug(m, "headers", request_headers)
 
     local response_headers = {}
     for i, header in ipairs(m.getvars("RESPONSE_HEADERS")) do
         response_headers[header.name:sub(#"RESPONSE_HEADERS:" + 1)] = header.value
     end
-    util.waf_debug(m, "headers", util.print_table(response_headers))
+    util.waf_debug(m, "headers", response_headers)
     
     local transaction = {
         ["matched_rules"] = m.getTriggeredRules(),
@@ -36,7 +36,7 @@ function main()
         ["response_headers"] = response_headers,
         -- ["response_body"] = m.getvar("RESPONSE_BODY") or '' -- Need to fix gzip Content-Encoding
     }
-    util.waf_debug(m, "transaction", util.print_table(transaction))
+    util.waf_debug(m, "transaction", transaction)
 
     waf_log_collection:insert(cjson.encode(transaction))
 end
