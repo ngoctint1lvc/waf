@@ -1,0 +1,6 @@
+[submodule "openresty/modsecurity-nginx"]
+	path = openresty/modsecurity-nginx
+	url = git@github.com:ngoctint1lvc/ModSecurity-nginx.git
+[submodule "openresty/modsecurity"]
+	path = openresty/modsecurity
+	url = git@github.com:ngoctint1lvc/ModSecurity.git

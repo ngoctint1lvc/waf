@@ -1,4 +1,4 @@
-package.path = package.path .. ";/opt/owasp-modsecurity-crs/lua-scripts/?.lua"
+package.path = package.path .. ";/opt/modsecurity-crs/lua-scripts/?.lua"
 local util = require("util")
 
 function main()

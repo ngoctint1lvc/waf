@@ -1,5 +1,13 @@
 FROM ubuntu:18.04
 
+COPY ./openresty-1.15.8.3 /root/openresty
+
+COPY ./modsecurity /opt/modsecurity
+
+COPY ./modsecurity-nginx /opt/modsecurity-nginx
+
+COPY ./modsecurity-crs /opt/modsecurity-crs
+
 RUN apt-get update && \
     apt-get install -y apt-utils && \
     apt-get install -y net-tools iputils-ping wget supervisor \
@@ -9,55 +17,19 @@ RUN apt-get update && \
 
 WORKDIR /root
 
-RUN wget https://openresty.org/download/openresty-1.15.8.2.tar.gz && \
-    tar -axf openresty-1.15.8.2.tar.gz
-
 # download and compile yajl
 RUN (wget http://github.com/lloyd/yajl/zipball/2.1.0 -O yajl.zip && \
     unzip yajl.zip && mv lloyd* yajl && rm yajl.zip && \
-    cd yajl && ./configure && make && make install)
-
-RUN git clone --depth=1 -b thesis https://github.com/ngoctint1lvc/ModSecurity.git /opt/ModSecurity
-
-RUN git clone --depth=1 https://github.com/ngoctint1lvc/ModSecurity-nginx.git /opt/ModSecurity-nginx
+    cd yajl && ./configure && make && make install && ldconfig)
 
 # download and install lua
 RUN apt-get update && \
     apt-get -y install lua5.1 liblua5.1-dev && \
     ln -sf /usr/bin/lua5.1 /usr/bin/lua
 
-RUN (cd /opt/ModSecurity && \
-    sh build.sh && \
-    git submodule init && \
-    git submodule update && \
-    ./configure --with-yajl --with-lua && \
-    make -j4 && \
-    make install)
-
-RUN (cd /opt && \
-    wget https://github.com/chobits/ngx_http_proxy_connect_module/archive/v0.0.1.tar.gz -O /opt/ngx_proxy_connect.tar.gz && \
-    tar -axf ngx_proxy_connect.tar.gz) && \
-    (cd openresty-1.15.8.2 && \
-    ./configure -j4 \
-    --with-pcre-jit \
-    --with-compat \
-    --with-http_ssl_module \
-    --with-http_realip_module \
-    --with-debug \
-    --add-dynamic-module=/opt/ModSecurity-nginx \
-    --add-dynamic-module=/opt/ngx_http_proxy_connect_module-0.0.1 && \
-    wget https://raw.githubusercontent.com/chobits/ngx_http_proxy_connect_module/master/patch/proxy_connect_rewrite_101504.patch -O patches/proxy_connect_rewrite.patch && \
-    patch -d build/nginx-1.15.8/ -p1 < patches/proxy_connect_rewrite.patch && \
-    make -j4 && \
-    make install)
-
-ENV PATH="/usr/local/openresty/bin:/usr/local/openresty/nginx/sbin:${PATH}"
-
 RUN mkdir -p /etc/modsecurity && \
-    cp /opt/ModSecurity/unicode.mapping /etc/modsecurity/unicode.mapping
-
-# fix bug cannot find yajl library
-RUN ldconfig
+    cp /opt/modsecurity/modsecurity.conf /etc/modsecurity/modsecurity.conf && \
+    cp /opt/modsecurity/unicode.mapping /etc/modsecurity/unicode.mapping
 
 # fix timezone problem
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata && \
@@ -81,9 +53,8 @@ RUN apt-get install -y luarocks && \
     luarocks install lua-cjson && \
     luarocks install lua-mongo
 
-# install fish vim and change default shell to fish
-RUN apt-get install -y fish vim && \
-    chsh -s /usr/bin/fish
+# update path env
+ENV PATH "/usr/local/openresty/bin:/usr/local/openresty/nginx/sbin:${PATH}"
 
 COPY run.sh /run.sh
 

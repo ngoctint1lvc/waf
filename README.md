@@ -21,6 +21,7 @@ Clone this project and start all docker services. Two images for testing includi
 ```
 git clone https://github.com/ngoctint1lvc/waf.git
 cd waf/
+git submodule update --init --recursive
 ```
 
 Add 2 local dns record to your host files
@@ -34,11 +35,20 @@ Start all containers
 docker-compose up -d
 ```
 
-To quickly spawn a shell into docker services, run those commands
+Using `dev.py` script to for development (only work on ubuntu linux)
 ```bash
-./run.sh    # openresty waf service,
-./run.sh dvwa   # dvwa service
-./run.sh nginx  # nginx service
+> python dev.py
+Command list:
+init
+init-terminal
+reload
+attack
+log
+test [url]
+gen-ssl
+rebuild-modsec
+update-dns
+restart
 ```
 
 ## Deployment

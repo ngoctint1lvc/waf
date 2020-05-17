@@ -1,7 +1,6 @@
 version: "3.7"
 services:
   openresty:
-    container_name: openresty
     build:
       context: ./openresty
       dockerfile: Dockerfile
@@ -9,18 +8,18 @@ services:
       - 127.0.0.1:80:80
       - 127.0.0.1:443:443
     volumes:
-      - "./openresty/etc/supervisor:/etc/supervisor"
-      - "./openresty/etc/nginx/conf:/usr/local/openresty/nginx/conf"
-      - "./openresty/etc/nginx/html:/usr/local/openresty/nginx/html"
-      - "./openresty/etc/nginx/lua-nginx:/usr/local/openresty/nginx/lua-nginx"
-      - "./openresty/etc/nginx/ssl:/usr/local/openresty/nginx/ssl"
-      - "./openresty/etc/modsecurity.conf:/etc/modsecurity/modsecurity.conf"
-      - "./openresty/etc/modsecurity-crs:/opt/owasp-modsecurity-crs"
+      - "./openresty/supervisor:/etc/supervisor"
+      - "./openresty/nginx/conf:/usr/local/openresty/nginx/conf"
+      - "./openresty/nginx/html:/usr/local/openresty/nginx/html"
+      - "./openresty/nginx/lua-nginx:/usr/local/openresty/nginx/lua-nginx"
+      - "./openresty/nginx/ssl:/usr/local/openresty/nginx/ssl"
+      - "./openresty/modsecurity/modsecurity.conf:/etc/modsecurity/modsecurity.conf"
+      - "./openresty/modsecurity-crs:/opt/modsecurity-crs"
+      - "./openresty/openresty-1.15.8.3:/root/openresty"
+      - "./openresty/modsecurity:/opt/modsecurity"
+      - "./openresty/modsecurity-nginx:/opt/modsecurity-nginx"
       - "./openresty/run.sh:/run.sh"
       - "vscode:/root/.vscode-server"
-      - "modsecurity-vscode-settings:/opt/ModSecurity/.vscode"
-      - "modsec-cache:/usr/local/modsecurity"
-      - "nginx-module-cache:/usr/local/openresty/nginx/modules"
     cap_add:
       - SYS_PTRACE
     security_opt:
@@ -67,6 +66,3 @@ volumes:
   dvwa-db:
   log-db:
   vscode:
-  modsec-cache:
-  nginx-module-cache:
-  modsecurity-vscode-settings:

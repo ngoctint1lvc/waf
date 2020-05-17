@@ -27,7 +27,7 @@ if cmd == 'init':
     os.popen('terminator -l waf-luanvan')
     os.system("code .")
 
-    folder_uri = 'vscode-remote://attached-container+' + codecs.encode(b'{"containerName":"openresty"}', 'hex').decode() + '/opt/ModSecurity'
+    folder_uri = 'vscode-remote://attached-container+' + codecs.encode(b'{"containerName":"openresty"}', 'hex').decode() + '/opt/modsecurity'
     os.system(f"code --folder-uri '{folder_uri}'")
 elif cmd == 'init-terminal':
     os.popen('terminator -l waf-luanvan')
@@ -38,12 +38,12 @@ elif cmd == 'attack':
 elif cmd == 'log':
     os.system('docker-compose logs -f --tail 100 openresty')
 elif cmd == 'rebuild-modsec':
-    bash_cmd = 'cd /opt/ModSecurity && git pull && make -j4 && make install && supervisorctl restart all'
+    bash_cmd = 'cd /opt/modsecurity && make -j4 && make install && supervisorctl restart all'
     os.system("docker-compose exec openresty bash -c '{}'".format(bash_cmd))
 elif cmd == 'restart':
     os.system('docker-compose exec openresty supervisorctl restart all')
 elif cmd == 'gen-ssl':
-    os.system('mkcert -cert-file ./openresty/etc/nginx/ssl/localhost.pem -key-file ./openresty/etc/nginx/ssl/localhost-key.pem ' + ' '.join(args))
+    os.system('mkcert -cert-file ./openresty/nginx/ssl/localhost.pem -key-file ./openresty/nginx/ssl/localhost-key.pem ' + ' '.join(args))
     os.system('docker-compose exec openresty nginx -s reload')
 elif cmd == 'test':
     url = args[0] if len(args) >= 1 else 'https://medium.com'
