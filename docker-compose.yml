@@ -62,7 +62,12 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
       ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
     restart: always
+  redis:
+    image: "redis:alpine3.11"
+    volumes:
+      - "redis-db:/data"
 volumes:
   dvwa-db:
   log-db:
   vscode:
+  redis-db:
