@@ -33,22 +33,22 @@ function util.waf_debug(m, ...)
 
     local arg = {...}
 
-    -- m.log(9, "[WAF][args] Num of arguments: " .. tostring(#arg))
+    -- m.log(1, "[WAF][args] Num of arguments: " .. tostring(#arg))
 
     if #arg >= 2 then
         local tag, msg = arg[1], arg[2]
         if type(msg) == 'table' then
             msg = print_table(msg)
         end
-        m.log(9, "[WAF][" .. tag .. "] " .. msg)
+        m.log(1, "[WAF][" .. tag .. "] " .. msg)
     elseif #arg == 1 then
         local msg = arg[1]
         if type(msg) == 'table' then
             msg = print_table(msg)
         end
-        m.log(9, "[WAF] " .. msg)
+        m.log(1, "[WAF] " .. msg)
     else
-        m.log(9, "[WAF] Empty message")
+        m.log(1, "[WAF] Empty message")
     end
 end
 

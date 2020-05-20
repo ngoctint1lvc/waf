@@ -9,9 +9,10 @@ function main()
 
     local num_rules = #rules
     util.waf_debug(m, "Number of triggered rules: " .. num_rules)
-    if num_rules > 0 then
-        return 1
-    end
+    -- if num_rules > 0 then
+    --     return 1
+    -- end
+    -- don't block anything
 
     return nil
 end
