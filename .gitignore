@@ -4,3 +4,4 @@ openresty/modsecurity-crs/custom-rules
 .env
 openresty/openresty-1.15.8.3/*
 openresty/nginx/ssl/*.pem
+mitmproxy/ssl/*.pem
