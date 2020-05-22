@@ -13,8 +13,7 @@ service dnsmasq start
 
 cat <<- 'HEREDOC' > /etc/resolv.conf
 nameserver 127.0.0.1
-nameserver 127.0.0.11
-nameserver 1.1.1.1
 HEREDOC
 
-mitmdump -p 8080 -k
+ln -sf /proc/1/fd/1 /var/log/supervisor/supervisord.log
+supervisord -n -c /etc/supervisor/supervisord.conf

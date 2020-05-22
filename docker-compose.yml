@@ -4,9 +4,6 @@ services:
     build:
       context: ./openresty
       dockerfile: Dockerfile
-    ports:
-      - 127.0.0.1:3002:80
-      - 127.0.0.1:3003:443
     volumes:
       - "./openresty/supervisor:/etc/supervisor"
       - "./openresty/nginx/conf:/usr/local/openresty/nginx/conf"
@@ -66,19 +63,20 @@ services:
     image: "redis:alpine3.11"
     volumes:
       - "redis-db:/data"
-  mitmproxy:
+  proxy-server:
     build:
-      context: ./mitmproxy
+      context: ./proxy-server
     volumes:
-      - "./mitmproxy/app.py:/app.py"
-      - "./mitmproxy/run.sh:/run.sh"
+      - "./proxy-server/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf"
+      - "./proxy-server/supervisor:/etc/supervisor"
+      - "./proxy-server/run.sh:/run.sh"
     cap_add:
       - NET_ADMIN
-    ports:
-      - "127.0.0.1:3004:8080"
     restart: always
     depends_on:
       - openresty
+    ports:
+      - "127.0.0.1:3004:80"
 volumes:
   dvwa-db:
   log-db:
