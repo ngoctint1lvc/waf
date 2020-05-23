@@ -14,6 +14,15 @@ local mongo = require("mongo")
 local client = mongo.Client('mongodb://' .. MONGODB_USER .. ':' .. MONGODB_PASSWORD .. "@" .. MONGODB_SERVER .. "/admin")
 local waf_normal_collection = client:getCollection('waf', 'normal_log')
 local waf_attack_collection = client:getCollection('waf', 'attack_log')
+local waf_maybe_normal_collection = client:getCollection('waf', 'maybe_normal_log')
+local waf_maybe_attack_collection = client:getCollection('waf', 'maybe_attack_log')
+local waf_production_collection = client:getCollection('waf', 'production_log')
+
+-- local waf_normal_collection = client:getCollection('waf', 'test_normal_log')
+-- local waf_attack_collection = client:getCollection('waf', 'test_attack_log')
+-- local waf_maybe_normal_collection = client:getCollection('waf', 'test_maybe_normal_log')
+-- local waf_maybe_attack_collection = client:getCollection('waf', 'test_maybe_attack_log')
+-- local waf_production_collection = client:getCollection('waf', 'test_production_log')
 
 function main()
     util.waf_debug(m, "Log transaction run!")
@@ -39,8 +48,7 @@ function main()
         ["request_headers"] = request_headers,
         ["request_body"] = m.getvar("REQUEST_BODY") or '',
         ["response_status"] = tonumber(m.getvar("RESPONSE_STATUS")),
-        ["response_headers"] = response_headers,
-        -- ["response_body"] = m.getvar("RESPONSE_BODY") or '' -- Need to fix gzip Content-Encoding
+        ["response_headers"] = response_headers
     }
     util.waf_debug(m, "transaction", transaction)
 
@@ -49,14 +57,29 @@ function main()
 
     if waf_mode == 'LEARNING_NORMAL' then
         waf_normal_collection:insert(cjson.encode(transaction))
+        util.waf_debug(m, "Added transaction to normal database")
     elseif waf_mode == 'LEARNING_ATTACK' then
         waf_attack_collection:insert(cjson.encode(transaction))
+        util.waf_debug(m, "Added transaction to attack database")
     end
 
     local is_blocked = m.getvar("TX.WAF_REQUEST_BLOCKED") == "1"
-    if not is_blocked then
-        waf_normal_collection:insert(cjson.encode(transaction))
+    util.waf_debug(m, "TX.WAF_REQUEST_BLOCKED = " .. tostring(m.getvar("TX.WAF_REQUEST_BLOCKED")))
+    if waf_mode == 'LEARNING_UNKNOWN' then
+        if is_blocked then
+            waf_maybe_attack_collection:insert(cjson.encode(transaction))
+            util.waf_debug(m, "Added transaction to maybe attack database")
+        else
+            waf_maybe_normal_collection:insert(cjson.encode(transaction))
+            util.waf_debug(m, "Added transaction to maybe normal database")
+        end
+    elseif waf_mode == 'PRODUCTION' then
+        transaction.is_blocked = is_blocked
+        waf_production_collection:insert(cjson.encode(transaction))
+        util.waf_debug(m, "Added transaction to production database")
     else
-        waf_attack_collection:insert(cjson.encode(transaction))
+        util.waf_debug(m, "Invalid waf mode " .. tostring(waf_mode))
     end
+
+    return 1
 end

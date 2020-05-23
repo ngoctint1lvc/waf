@@ -1,36 +1,33 @@
 package.path = package.path .. ";/opt/modsecurity-crs/lua-scripts/?.lua"
 local util = require("util")
 
+function should_block(rules)
+    -- TODO: Apply ML model
+    return #rules >= 1
+end
+
 function main()
     util.waf_debug(m, "Starting script execution")
     local rules = m.getTriggeredRules()
-    util.waf_debug(m, "triggered rules", rules)
-    util.waf_debug(m, "lua package path", package.path)
+    -- util.waf_debug(m, "triggered rules", rules)
+    -- util.waf_debug(m, "lua package path", package.path)
 
-    local num_rules = #rules
-    util.waf_debug(m, "Number of triggered rules: " .. num_rules)
+    util.waf_debug(m, "Number of triggered rules: " .. #rules)
 
-    -- waf_mode is 'LEARNING_ATTACK' or 'LEARNING_NORMAL' or 'NORMAL'
+    -- waf_mode is one of the following
     -- In 'LEARNING_ATTACK' mode, waf will not block any request but will store them in waf.attack_log
     -- In 'LEARNING_NORMAL' mode, waf will not block any request and will store traffic in waf.normal_log
-    -- In 'NORMAL' mode, waf will block any request which trigger >= 1 rules
-    local waf_mode = m.getvar("TX.WAF_MODE")
+    -- In 'LEARNING_UNKNOWN' mode, waf will block attack requests and store all requests in log
+    -- In 'PRODUCTION' mode, waf will block attack requests but not store any requests log
+    local waf_mode = m.getvar("TX.WAF_MODE") or 'PRODUCTION'
 
-    -- util.waf_debug(m, "Waf mode is " .. tostring(waf_mode))
-    if waf_mode == 'LEARNING_ATTACK' or waf_mode == 'LEARNING_NORMAL' then
-        return nil
+    -- request may be blocked in 'LEARNING_UNKNOWN' and 'PRODUCTION' mode
+    if waf_mode == 'LEARNING_UNKNOWN' or waf_mode == 'PRODUCTION' then
+        if should_block(rules) then
+            m.setvar("TX.WAF_REQUEST_BLOCKED", "1")
+            return 1
+        end
     end
-
-    if waf_mode ~= 'NORMAL' then
-        m.log("Invalid waf mode: " .. tostring(waf_mode))
-    end
-    
-    if num_rules > 0 then
-        m.setvar("TX.WAF_REQUEST_BLOCKED", "1")
-        return 1
-    end
-
-    -- -- TODO: Apply ML model
 
     m.setvar("TX.WAF_REQUEST_BLOCKED", "0")
     return nil

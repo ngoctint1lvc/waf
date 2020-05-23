@@ -35,15 +35,24 @@ def init_vscode(c):
 
 
 @task
-def reload(c):
+def reload(c, proxy=False, all=False):
     change_dir()
-    c.run("docker-compose exec openresty nginx -s reload", pty=True)
+    if all:
+        c.run("docker-compose exec openresty nginx -s reload", pty=True)
+        c.run("docker-compose exec proxy-server nginx -s reload", pty=True)
+    elif proxy:
+        c.run("docker-compose exec proxy-server nginx -s reload", pty=True)
+    else:
+        c.run("docker-compose exec openresty nginx -s reload", pty=True)
+    
 
 
 @task
-def restart(c):
+def restart(c, proxy=False):
     change_dir()
     c.run("docker-compose exec openresty supervisorctl restart all", pty=True)
+    if proxy:
+        c.run("docker-compose exec proxy-server supervisorctl restart all", pty=True)
 
 
 @task
@@ -52,7 +61,7 @@ def log(c, all=False, proxy=False, tail=100):
     if all:
         services = ''
     elif proxy:
-        services = 'proxy-server openresty'
+        services = 'proxy-server'
     else:
         services = 'openresty'
     c.run(f'docker-compose logs -f --tail {tail} {services}')
@@ -101,24 +110,36 @@ def gen_ssl(c, domains=[]):
 
 
 @task
-def test(c, url='https://ntsec.cf'):
-    c.run(f'http_proxy=http://localhost:3004 https_proxy=http://localhost:3004 curl -ik -L {url}')
+def test(c, url='https://ntsec.cf', attack=False):
+    if not attack:
+        c.run(
+            f'http_proxy=http://localhost:3004 https_proxy=http://localhost:3004 curl -ik -L {url}')
+    else:
+        c.run('http_proxy=http://localhost:3004 curl -ik -v http://ntsec.cf?x=' +
+              quote_plus('; cat /etc/passwd'))
 
 
 @task
-def test_attack(c):
+def waf_mode_update(c, mode):
     change_dir()
-    c.run('http_proxy=http://localhost:3004 curl -ik -v http://ntsec.cf?x=' + quote_plus('; cat /etc/passwd'))
-
-
-@task
-def waf_mode(c, mode):
-    change_dir()
-    support_modes = ['LEARNING_ATTACK', 'LEARNING_NORMAL', 'NORMAL']
+    mode = mode.upper()
+    support_modes = ['LEARNING_ATTACK', 'LEARNING_NORMAL',
+                     'LEARNING_UNKNOWN', 'PRODUCTION']
     if mode not in support_modes:
         print("Error: waf mode must be in " + ', '.join(support_modes))
         return
     print("[+] Change waf mode to " + mode)
     replace_file_regex("./openresty/modsecurity-crs/custom-rules.conf",
-                       'setvar:tx.waf_mode=(LEARNING_NORMAL|LEARNING_NORMAL|NORMAL)', f'setvar:tx.waf_mode={mode}')
-    c.run("docker-compose exec openresty nginx -s reload", pty=True)
+                       'setvar:TX.WAF_MODE=[\\w_]+\\b', f'setvar:TX.WAF_MODE={mode}')
+    reload(c)
+    waf_mode(c)
+
+
+@task
+def waf_mode(c):
+    change_dir()
+    with open("./openresty/modsecurity-crs/custom-rules.conf", "r") as fd:
+        content = fd.read()
+        waf_mode = re.search(
+            "setvar:TX.WAF_MODE=([\\w_]+)\\b", content).group(1)
+        print(f"[+] Current waf mode is {waf_mode}")
