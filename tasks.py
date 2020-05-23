@@ -21,46 +21,6 @@ def change_dir():
 
 
 @task
-def dns_reload(c):
-    change_dir()
-    c.run('sudo cp ./openresty/dnsmasq.conf /etc/dnsmasq.d/custom.conf')
-    c.run('sudo service dnsmasq restart')
-
-
-@task
-def dns_start(c):
-    change_dir()
-    white_lists = [
-        'clients4.google.com',
-        'acbpro.com',
-        'archive.ubuntu.com',
-        'mirror.clearsky.vn',
-        'download.docker.com',
-        'repo.skype.com'
-    ]
-    with open("./openresty/dnsmasq.conf", "w") as fd:
-        fd.write(f"address=/#/127.0.0.1\n")
-        for domain in white_lists:
-            fd.write(f"server=/{domain}/1.1.1.1\n")
-    dns_reload(c)
-
-
-@task
-def dns_stop(c):
-    change_dir()
-    c.run('sudo rm -f /etc/dnsmasq.d/custom.conf')
-    c.run('sudo service dnsmasq restart')
-
-
-@task
-def dns_debug(c, domain):
-    change_dir()
-    with open("./openresty/dnsmasq.conf", "w") as fd:
-        fd.write(f"address=/{domain}/127.0.0.1\n")
-    dns_reload(c)
-
-
-@task
 def init_vscode(c):
     change_dir()
     has_vscode = shutil.which("code")
@@ -72,23 +32,6 @@ def init_vscode(c):
         codecs.encode(b'{"containerName":"waf_openresty_1"}',
                       'hex').decode() + '/opt/modsecurity'
     c.run(f"code --folder-uri '{folder_uri}'")
-
-
-@task
-def init(c):
-    change_dir()
-    print("[+] Stopping all running docker containers")
-    c.run("zsh -c 'source ~/.zshrc; docker-container-stop'")
-    print("[+] Starting docker-compose")
-    c.run("docker-compose up -d", pty=True)
-    init_terminal(c)
-    init_vscode(c)
-    dns_start(c)
-
-
-@task
-def init_terminal(c):
-    c.run("terminator -l waf-luanvan", asynchronous=True)
 
 
 @task
@@ -104,9 +47,15 @@ def restart(c):
 
 
 @task
-def log(c):
+def log(c, all=False, proxy=False, tail=100):
     change_dir()
-    c.run('docker-compose logs -f --tail 100 openresty')
+    if all:
+        services = ''
+    elif proxy:
+        services = 'proxy-server openresty'
+    else:
+        services = 'openresty'
+    c.run(f'docker-compose logs -f --tail {tail} {services}')
 
 
 @task
@@ -143,7 +92,9 @@ def gen_ssl(c, domains=[]):
             'youtube.com',
             '*.youtube.com',
             'github.com',
-            '*.github.com'
+            '*.github.com',
+            'hcmut.edu.vn',
+            '*.hcmut.edu.vn'
         ]
     c.run('mkcert -cert-file ./openresty/nginx/ssl/localhost.pem -key-file ./openresty/nginx/ssl/localhost-key.pem ' + ' '.join(domains))
     c.run('docker-compose exec openresty nginx -s reload', pty=True)
@@ -151,13 +102,13 @@ def gen_ssl(c, domains=[]):
 
 @task
 def test(c, url='https://ntsec.cf'):
-    c.run(f'curl -ik -L {url}')
+    c.run(f'http_proxy=http://localhost:3004 https_proxy=http://localhost:3004 curl -ik -L {url}')
 
 
 @task
 def test_attack(c):
     change_dir()
-    c.run('curl -ik -v http://ntsec.cf?x=' + quote_plus('; cat /etc/passwd'))
+    c.run('http_proxy=http://localhost:3004 curl -ik -v http://ntsec.cf?x=' + quote_plus('; cat /etc/passwd'))
 
 
 @task
