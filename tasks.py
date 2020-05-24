@@ -15,9 +15,38 @@ def replace_file_regex(filepath, search, replace):
         f.truncate()
 
 
-def change_dir():
+def grep_file_regex(filepath, searchRegex):
+    with open(filepath, "r") as fd:
+        content = fd.read()
+        return re.search(searchRegex, content)
+
+
+def change_dir(dir=None):
     working_dir = os.path.abspath(os.path.dirname(__file__))
+    if dir:
+        working_dir = os.path.join(working_dir, dir)
     os.chdir(working_dir)
+
+
+@task
+def up(c, build=False):
+    change_dir()
+    c.run("docker-compose up -d" + (' --build' if build else ''))
+    dns_reload(c)
+
+
+@task
+def dns_reload(c):
+    openresty_ip = c.run(
+        r"docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' waf_openresty_1").stdout
+    openresty_ip = openresty_ip.replace("\n", "")
+    print(f"Openresty container IP is '{openresty_ip}'")
+    domains = ['dvwa.test', 'nginx.test', 'openresty.docker']
+    config = '\n'.join(
+        [f'address=/{domain}/{openresty_ip}' for domain in domains])
+    c.run(
+        f"sudo bash -c \"echo '{config}' > /etc/dnsmasq.d/docker-config.conf\"", pty=False)
+    c.run("sudo service dnsmasq restart", pty=False)
 
 
 @task
@@ -38,21 +67,20 @@ def init_vscode(c):
 def reload(c, proxy=False, all=False):
     change_dir()
     if all:
-        c.run("docker-compose exec openresty nginx -s reload", pty=True)
-        c.run("docker-compose exec proxy-server nginx -s reload", pty=True)
+        c.run("docker-compose exec openresty nginx -s reload")
+        c.run("docker-compose exec proxy-server nginx -s reload")
     elif proxy:
-        c.run("docker-compose exec proxy-server nginx -s reload", pty=True)
+        c.run("docker-compose exec proxy-server nginx -s reload")
     else:
-        c.run("docker-compose exec openresty nginx -s reload", pty=True)
-    
+        c.run("docker-compose exec openresty nginx -s reload")
 
 
 @task
 def restart(c, proxy=False):
     change_dir()
-    c.run("docker-compose exec openresty supervisorctl restart all", pty=True)
+    c.run("docker-compose exec openresty supervisorctl restart all")
     if proxy:
-        c.run("docker-compose exec proxy-server supervisorctl restart all", pty=True)
+        c.run("docker-compose exec proxy-server supervisorctl restart all")
 
 
 @task
@@ -77,14 +105,14 @@ def modsec_log_level(c, level):
     print(f"[+] Change modsecurity log level to {level}")
     replace_file_regex("./openresty/modsecurity/modsecurity.conf",
                        'SecDebugLogLevel \\d', f'SecDebugLogLevel {level}')
-    c.run("docker-compose exec openresty nginx -s reload", pty=True)
+    c.run("docker-compose exec openresty nginx -s reload")
 
 
 @task
 def modsec_rebuild(c):
     change_dir()
     bash_cmd = 'cd /opt/modsecurity && make -j4 && make install && supervisorctl restart all'
-    c.run("docker-compose exec openresty bash -c '{}'".format(bash_cmd), pty=True)
+    c.run("docker-compose exec openresty bash -c '{}'".format(bash_cmd))
 
 
 @task(iterable=['domains'])
@@ -106,7 +134,7 @@ def gen_ssl(c, domains=[]):
             '*.hcmut.edu.vn'
         ]
     c.run('mkcert -cert-file ./openresty/nginx/ssl/localhost.pem -key-file ./openresty/nginx/ssl/localhost-key.pem ' + ' '.join(domains))
-    c.run('docker-compose exec openresty nginx -s reload', pty=True)
+    c.run('docker-compose exec openresty nginx -s reload')
 
 
 @task
@@ -138,8 +166,36 @@ def waf_mode_update(c, mode):
 @task
 def waf_mode(c):
     change_dir()
-    with open("./openresty/modsecurity-crs/custom-rules.conf", "r") as fd:
-        content = fd.read()
-        waf_mode = re.search(
-            "setvar:TX.WAF_MODE=([\\w_]+)\\b", content).group(1)
-        print(f"[+] Current waf mode is {waf_mode}")
+    waf_mode = grep_file_regex(
+        "./openresty/modsecurity-crs/custom-rules.conf", "setvar:TX.WAF_MODE=([\\w_]+)\\b").group(1)
+    print(f"[+] Current waf mode is {waf_mode}")
+
+
+@task
+def csic_transform(c):
+    dns_reload(c)
+
+    old_prefix = get_prefix(c)
+    update_prefix(c, 'csic')
+
+    change_dir('./tools/gen-traffic')
+    c.run('node run.js csic-transform http://nginx.test -vv')
+
+    update_prefix(c, old_prefix)
+
+
+@task
+def update_prefix(c, prefix):
+    change_dir()
+    print(f"[+] Change prefix to '{prefix}'")
+    replace_file_regex('.env', r"COLLECTION_PREFIX=.*",
+                       f"COLLECTION_PREFIX={prefix}")
+    up(c)
+    get_prefix(c)
+
+@task
+def get_prefix(c):
+    change_dir()
+    prefix = grep_file_regex(".env", "COLLECTION_PREFIX=(.*)").group(1)
+    print(f"[+] Current prefix is '{prefix}'")
+    return prefix

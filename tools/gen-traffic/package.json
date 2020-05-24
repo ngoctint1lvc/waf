@@ -1,0 +1,14 @@
+{
+  "name": "gen-traffic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "ngoctin",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "cli-progress": "^3.8.2",
+    "csv-writer": "^1.6.0",
+    "n-readlines": "^1.0.0",
+    "yargs": "^15.3.1"
+  }
+}
