@@ -55,17 +55,16 @@ function main()
     local waf_mode = m.getvar("TX.WAF_MODE")
     util.waf_debug(m, "Current waf mode: " .. tostring(waf_mode))
 
+    local is_blocked = m.getvar("TX.WAF_REQUEST_BLOCKED") == "1"
+    util.waf_debug(m, "TX.WAF_REQUEST_BLOCKED = " .. tostring(m.getvar("TX.WAF_REQUEST_BLOCKED")))
+
     if waf_mode == 'LEARNING_NORMAL' then
         waf_normal_collection:insert(cjson.encode(transaction))
         util.waf_debug(m, "Added transaction to normal database")
     elseif waf_mode == 'LEARNING_ATTACK' then
         waf_attack_collection:insert(cjson.encode(transaction))
         util.waf_debug(m, "Added transaction to attack database")
-    end
-
-    local is_blocked = m.getvar("TX.WAF_REQUEST_BLOCKED") == "1"
-    util.waf_debug(m, "TX.WAF_REQUEST_BLOCKED = " .. tostring(m.getvar("TX.WAF_REQUEST_BLOCKED")))
-    if waf_mode == 'LEARNING_UNKNOWN' then
+    elseif waf_mode == 'LEARNING_UNKNOWN' then
         if is_blocked then
             waf_maybe_attack_collection:insert(cjson.encode(transaction))
             util.waf_debug(m, "Added transaction to maybe attack database")
