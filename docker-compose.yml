@@ -1,6 +1,7 @@
 version: "3.7"
 services:
   openresty:
+    container_name: openresty-waf
     build:
       context: ./openresty
       dockerfile: Dockerfile
@@ -45,6 +46,7 @@ services:
       - "./nginx-test/html:/usr/share/nginx/html"
   log-db:
     image: "mongo"
+    container_name: waf-log-db
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
       MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
