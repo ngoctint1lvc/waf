@@ -42,7 +42,10 @@ function removeFileIfExists(filePath) {
 
 function* readTxtFile(filePath) {
     let line;
-    const liner = new lineByLine(filePath);
+    const liner = new lineByLine(filePath, {
+        readChunk: 1024*1024
+    });
+
     while (line = liner.next()) {
         yield line.toString();
     }

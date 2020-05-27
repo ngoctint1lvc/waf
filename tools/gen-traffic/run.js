@@ -249,7 +249,7 @@ async function sendRequestsMultithread(httpRequests, port, numRequests) {
         }
     } else if (command == "ecml-transform") {
         debug(1, `Change WAF mode to LEARNING_ATTACK`);
-        await utils.shell("inv config-update -p ecml -m learning_attack");
+        await utils.shell("inv config-update -p ecml_pkdd -m learning_attack");
 
         for (let item of ecmlData) {
             console.log(`Transforming ${item.type}`);

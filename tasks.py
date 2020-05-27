@@ -4,6 +4,7 @@ import shutil
 import os
 from urllib.parse import quote_plus
 import re
+from pprint import pprint
 
 
 def replace_file_regex(filepath, search, replace):
@@ -44,11 +45,13 @@ def get_container_ip(name):
 
 
 @task
-def ip(c, container):
+def ip(c):
     '''
-    Resolve IP of docker container with container name
+    Show all current container ips
     '''
-    debug(get_container_ip(container))
+    conainters = c.run(r"docker container ls --format '{{.Names}}'", hide='out').stdout.split("\r\n")[:-1]
+    for container in conainters:
+        debug(get_container_ip(container))
 
 @task
 def dns_reload(c):
@@ -192,6 +195,7 @@ def waf_mode(c):
     waf_mode = grep_file_regex(
         "./openresty/modsecurity-crs/custom-rules.conf", "setvar:TX.WAF_MODE=([\\w_]+)\\b").group(1)
     debug(f"Current waf mode is {waf_mode}")
+    return waf_mode
 
 
 @task
@@ -201,26 +205,35 @@ def csic_transform(c):
     Automatically change collection prefix to csic and revert back
     '''
 
-    old_prefix = get_prefix(c)
-    update_prefix(c, 'csic')
-
+    old_config = config(c)
+    pprint(old_config)
     change_dir('./tools/gen-traffic')
-    c.run('node run.js csic-transform http://nginx.test -vv')
-
-    update_prefix(c, old_prefix)
+    try:
+        c.run('node run.js csic-transform http://nginx.test -vv')
+    except:
+        print("\n")
+        debug("Interrupted")
+    finally:
+        config_update(c, prefix=old_config["prefix"], mode=old_config["mode"])
 
 
 @task
 def ecml_transform(c):
     '''
-    Transform ECML PKDD dataset
+    Transform ECML PKDD dataset by passing it to openresty WAF
+    Automatically change collection prefix to ecml_pkdd and revert back
     '''
 
-    old_prefix = get_prefix(c)
-    update_prefix(c, 'ecml_pkdd')
+    old_config = config(c)
+    pprint(old_config)
     change_dir('./tools/gen-traffic')
-    c.run('node run.js ecml-transform http://nginx.test -vv')
-    update_prefix(c, old_prefix)
+    try:
+        c.run('node run.js ecml-transform http://nginx.test -vv')
+    except:
+        print("\n")
+        debug("Interrupted")
+    finally:
+        config_update(c, prefix=old_config["prefix"], mode=old_config["mode"])
 
 
 def update_prefix(c, prefix):
@@ -253,10 +266,15 @@ def config(c):
     '''
     Get WAF config
     '''
-    get_prefix(c)
-    waf_mode(c)
+    prefix = get_prefix(c)
+    mode = waf_mode(c)
     debug('Current DNS config')
     c.run("cat /etc/dnsmasq.d/docker-config.conf")
+
+    return {
+        "prefix": prefix,
+        "mode": mode
+    }
 
 
 def debug(*msg):

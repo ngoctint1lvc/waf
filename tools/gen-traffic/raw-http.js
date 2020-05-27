@@ -47,8 +47,7 @@ async function sendRequest(host, port, request) {
     let socket = await connectSocket(host, port);
     await writeSocket(socket, request);
     let data = await waitForData(socket).catch(err => {
-        console.log("\nInvalid request!\n---------BEGIN----------\n" + request + "\n---------END----------\n");
-        console.log(err);
+        console.log("\nInvalid request!\n---------BEGIN----------\n" + request + "\n---------END----------\n" + err + "\n");
     })
     socket.end();
     return data;
