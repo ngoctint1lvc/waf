@@ -49,7 +49,8 @@ function main()
     }
     util.waf_debug(m, "transaction", transaction)
 
-    local waf_mode = m.getvar("TX.WAF_MODE")
+    -- Allow single request to overwrite WAF mode
+    local waf_mode = request_headers["X-WAF-Mode"] or m.getvar("TX.WAF_MODE")
     util.waf_debug(m, "Current waf mode: " .. tostring(waf_mode))
 
     local is_blocked = m.getvar("TX.WAF_REQUEST_BLOCKED") == "1"
