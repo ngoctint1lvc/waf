@@ -177,7 +177,7 @@ async function sendRequestsMultithread(httpRequests, port, numRequests) {
     bar.start(numRequests, 0);
 
     let buffer = [];
-    let maxBufferSize = 50;
+    let maxBufferSize = parseInt(process.env.MAX_BUFFER_SIZE) || 10;
 
     let workerPool = [];
     for (let i = 0; i < maxBufferSize; i++) {
@@ -195,8 +195,8 @@ async function sendRequestsMultithread(httpRequests, port, numRequests) {
                 buffer.map((httpRequest, idx) => {
                     return new Promise((resolve, reject) => {
                         const worker = workerPool[idx];
-                        worker.postMessage(httpRequest);
                         worker.removeAllListeners();
+                        worker.postMessage(httpRequest);
                         worker.on("message", (value) => {
                             if (!value.success) console.log(value.data);
                             resolve(value);
@@ -212,9 +212,13 @@ async function sendRequestsMultithread(httpRequests, port, numRequests) {
                 bar.stop();
                 break;
             }
-        } else {
-            buffer.push(value);
         }
+
+        buffer.push(value);
+    }
+
+    for (let worker of workerPool) {
+        worker.terminate();
     }
 }
 

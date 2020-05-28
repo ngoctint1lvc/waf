@@ -153,7 +153,9 @@ def gen_ssl(c, domains=[]):
             'hcmut.edu.vn',
             '*.hcmut.edu.vn',
             'vzota.com.vn',
-            '*.vzota.com.vn'
+            '*.vzota.com.vn',
+            'overleaf.com',
+            '*.overleaf.com'
         ]
     c.run('mkcert -cert-file ./openresty/nginx/ssl/localhost.pem -key-file ./openresty/nginx/ssl/localhost-key.pem ' + ' '.join(domains))
     c.run('docker-compose exec openresty nginx -s reload')
@@ -209,7 +211,7 @@ def csic_transform(c):
     pprint(old_config)
     change_dir('./tools/gen-traffic')
     try:
-        c.run('node run.js csic-transform http://nginx.test -vv')
+        c.run('MAX_BUFFER_SIZE=10 node run.js csic-transform http://nginx.test -vv')
     except:
         print("\n")
         debug("Interrupted")
@@ -228,7 +230,7 @@ def ecml_transform(c):
     pprint(old_config)
     change_dir('./tools/gen-traffic')
     try:
-        c.run('node run.js ecml-transform http://nginx.test -vv')
+        c.run('MAX_BUFFER_SIZE=50 node run.js ecml-transform http://nginx.test -vv')
     except:
         print("\n")
         debug("Interrupted")
