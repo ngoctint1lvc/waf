@@ -31,6 +31,7 @@ services:
       COLLECTION_PREFIX: "${COLLECTION_PREFIX}"
       DEBUG: "${DEBUG}"
     restart: always
+    dns: 1.1.1.1
   dvwa-test:
     image: vulnerables/web-dvwa
     container_name: dvwa-test

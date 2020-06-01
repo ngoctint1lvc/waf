@@ -33,9 +33,6 @@ function main()
     for i, header in ipairs(m.getvars("RESPONSE_HEADERS")) do
         response_headers[header.name:sub(#"RESPONSE_HEADERS:" + 1)] = header.value
     end
-
-    -- remove Server header from response
-    response_headers["Server"] = nil
     
     local transaction = {
         ["matched_rules"] = m.getTriggeredRules(),
