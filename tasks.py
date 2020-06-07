@@ -281,3 +281,12 @@ def config(c):
 
 def debug(*msg):
     print('[+]', *msg)
+
+
+@task
+def ml_rebuild(c):
+    '''
+    Rebuild ML model and restart WAF
+    '''
+    c.run("docker-compose exec openresty bash -c 'cd /opt/modsecurity-crs/lua-scripts/ml-model && make'")
+    restart(c)
