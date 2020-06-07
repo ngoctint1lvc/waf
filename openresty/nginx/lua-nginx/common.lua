@@ -9,7 +9,7 @@ function _M.debug(...)
     if #args > 1 then
         local tag, msg = args[1], args[2]
         if type(msg) == 'table' then
-            msg = print_table(msg)
+            msg = _M.print_table(msg)
         end
         print("[RESTY][" .. tag .. "] " .. msg)
     else

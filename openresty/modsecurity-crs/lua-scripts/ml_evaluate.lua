@@ -214,7 +214,7 @@ function main()
     -- In 'LEARNING_ATTACK' mode, waf will not block any request but will store them in waf.attack_log
     -- In 'LEARNING_NORMAL' mode, waf will not block any request and will store traffic in waf.normal_log
     -- In 'LEARNING_UNKNOWN' mode, waf will block attack requests and store all requests in log
-    -- In 'PRODUCTION' mode, waf will block attack requests but not store any requests log
+    -- In 'PRODUCTION' mode, waf will block attack requests and store all requests in production log
     local waf_mode = m.getvar("TX.WAF_MODE") or 'PRODUCTION'
 
     -- request may be blocked in 'LEARNING_UNKNOWN' and 'PRODUCTION' mode
