@@ -52,7 +52,6 @@
   "permissions": [
     "webRequest",
     "webRequestBlocking",
-    "requestHeaders",
     "http://*/*",
     "https://*/*",
     "ws://*/*",

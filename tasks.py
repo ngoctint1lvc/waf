@@ -66,7 +66,7 @@ def dns_reload(c):
     c.run(
         f"sudo bash -c 'echo \"address=/mongo.docker/{mongodb_ip}\" >> /etc/dnsmasq.d/docker-config.conf'", pty=False)
 
-    c.run("sudo service dnsmasq restart", pty=False)
+    c.run("sudo systemctl restart dnsmasq", pty=False)
 
 
 @task
@@ -155,7 +155,9 @@ def gen_ssl(c, domains=[]):
             'vzota.com.vn',
             '*.vzota.com.vn',
             'overleaf.com',
-            '*.overleaf.com'
+            '*.overleaf.com',
+            'discord.com',
+            '*.discord.com'
         ]
     c.run('mkcert -cert-file ./openresty/nginx/ssl/localhost.pem -key-file ./openresty/nginx/ssl/localhost-key.pem ' + ' '.join(domains))
     c.run('docker-compose exec openresty nginx -s reload')
@@ -290,3 +292,87 @@ def ml_rebuild(c):
     '''
     c.run("docker-compose exec openresty bash -c 'cd /opt/modsecurity-crs/lua-scripts/ml-model && make'")
     restart(c)
+
+
+@task(help={
+    'name': 'decision_tree | random_forest'
+})
+def ml_update(c, name='decision_tree'):
+    '''
+    Copy new model code and rebuild
+    '''
+
+    change_dir("./ml-model")
+    c.run("python export_model.py")
+    change_dir()
+
+    if name not in ['decision_tree', 'random_forest']:
+        debug("Model name must be: decision_tree | random_forest")
+        return
+
+    debug(f"Update model {name}")
+
+    try:
+        with open(f"./ml-model/{name}.c", "r") as fd:
+            model_C_code = fd.read()
+
+        output_C_code = f'''
+{model_C_code}
+
+#define N_FEAFURES 161
+#define STR(s) #s
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+
+static int l_predict(lua_State *L) {{
+    int nargs = lua_gettop(L);
+    if (nargs < 1) {{
+        lua_pushstring(L, "Missing positional argument: features (table)");
+        lua_error(L);
+    }}
+
+    // ignore other arguments
+    lua_settop(L, 1);
+
+    luaL_checktype(L, 1, LUA_TTABLE);
+    int input_table_length = lua_objlen(L, 1);
+    printf("Input features: %d\\n", input_table_length);
+
+    if (input_table_length != N_FEAFURES) {{
+        lua_pushstring(L, "Wrong number of features (required " STR(N_FEAFURES) " features)");
+        lua_error(L);
+    }}
+
+    float features[N_FEAFURES];
+    int i = 0;
+    lua_pushnil(L);
+    while (lua_next(L, 1) != 0) {{
+        features[i++] = luaL_checknumber(L, -1);
+        lua_pop(L, 1);
+    }}
+
+    int result = predict(features);
+    lua_pushnumber(L, result);
+    return 1;
+}}
+
+static const struct luaL_reg funcs[] = {{
+    {{ "predict", l_predict }},
+    {{ NULL, NULL }}
+}};
+
+int luaopen_{name}(lua_State *L) {{
+    luaL_register(L, "{name}", funcs);
+    return 0;
+}}
+'''
+        with open(f"./openresty/modsecurity-crs/lua-scripts/ml-model/{name}.c", "w+") as fd:
+            fd.write(output_C_code)
+
+    except Exception as e:
+        debug("Failed to update model")
+        debug(e)
+    
+    ml_rebuild(c)
+    

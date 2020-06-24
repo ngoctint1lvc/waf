@@ -9,7 +9,7 @@ random_forest.so: random_forest.c
 	gcc -o random_forest.so $(CFLAGS) random_forest.c
 
 test:
-	lua ./tests/test1.lua
+	ls ./tests/*.lua | xargs -n 1 lua
 
 clean:
 	rm *.so
