@@ -301,10 +301,9 @@ def ml_update(c, name='decision_tree'):
     '''
     Copy new model code and rebuild
     '''
+    from tools.ml_util.export_model import export_all
 
-    change_dir("./ml-model")
-    c.run("python export_model.py")
-    change_dir()
+    export_all()
 
     if name not in ['decision_tree', 'random_forest']:
         debug("Model name must be: decision_tree | random_forest")
