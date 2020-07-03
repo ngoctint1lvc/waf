@@ -6,6 +6,14 @@ from urllib.parse import quote_plus
 import re
 from pprint import pprint
 
+def change_dir(dir=None):
+    working_dir = os.path.abspath(os.path.dirname(__file__))
+    if dir:
+        working_dir = os.path.join(working_dir, dir)
+    os.chdir(working_dir)
+
+change_dir()
+
 
 def replace_file_regex(filepath, search, replace):
     with open(filepath, "r+") as f:
@@ -20,13 +28,6 @@ def grep_file_regex(filepath, searchRegex):
     with open(filepath, "r") as fd:
         content = fd.read()
         return re.search(searchRegex, content)
-
-
-def change_dir(dir=None):
-    working_dir = os.path.abspath(os.path.dirname(__file__))
-    if dir:
-        working_dir = os.path.join(working_dir, dir)
-    os.chdir(working_dir)
 
 
 @task
@@ -312,7 +313,7 @@ def ml_update(c, name='decision_tree'):
     debug(f"Update model {name}")
 
     try:
-        with open(f"./ml-model/{name}.c", "r") as fd:
+        with open(f"./tools/ml_util/output/{name}.c", "r") as fd:
             model_C_code = fd.read()
 
         output_C_code = f'''
@@ -374,4 +375,10 @@ int luaopen_{name}(lua_State *L) {{
         debug(e)
     
     ml_rebuild(c)
-    
+
+@task
+def pull_drive(c):
+    change_dir("ml-model")
+    c.run("rclone copy drive:/project/waf/train.ipynb .")
+    c.run("rclone copy drive:/project/waf/saved-models .")
+    change_dir()

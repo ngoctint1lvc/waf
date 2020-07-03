@@ -1,8 +1,8 @@
 package.path = package.path .. ";/opt/modsecurity-crs/lua-scripts/?.lua"
 package.cpath = package.cpath .. ";/opt/modsecurity-crs/lua-scripts/ml-model/?.so"
 local util = require("util")
--- local ml_model = require("decision_tree")
-local ml_model = require("random_forest")
+local ml_model = require("decision_tree")
+-- local ml_model = require("random_forest")
 
 function should_block(m, rules)
     local features = {
