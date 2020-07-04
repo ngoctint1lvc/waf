@@ -26,6 +26,10 @@ RUN (wget https://github.com/chobits/ngx_http_proxy_connect_module/archive/v0.0.
 
 ENV PATH="/usr/local/openresty/bin:/usr/local/openresty/nginx/sbin:${PATH}"
 
+COPY ./nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+
+COPY ./supervisor /etc/supervisor
+
 COPY ./run.sh /run.sh
 
 RUN chmod +x /run.sh

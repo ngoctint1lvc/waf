@@ -1,8 +1,8 @@
 package.path = package.path .. ";/opt/modsecurity-crs/lua-scripts/?.lua"
 package.cpath = package.cpath .. ";/opt/modsecurity-crs/lua-scripts/ml-model/?.so"
 local util = require("util")
-local ml_model = require("decision_tree")
--- local ml_model = require("random_forest")
+-- local ml_model = require("decision_tree")
+local ml_model = require("random_forest")
 
 function should_block(m, rules)
     local features = {
@@ -66,8 +66,6 @@ function should_block(m, rules)
         '941260',
         '920270',
         '920271',
-        '920272',
-        '920273',
         '920274',
         '942290',
         '934100',
@@ -185,6 +183,8 @@ function should_block(m, rules)
         else
             features_arr[i] = 0
         end
+
+        -- util.waf_debug(m, "ml_feature", v .. " = " .. features_arr[i])
         
         ::continue::
     end

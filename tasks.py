@@ -291,6 +291,7 @@ def ml_rebuild(c):
     '''
     Rebuild ML model and restart WAF
     '''
+    change_dir()
     c.run("docker-compose exec openresty bash -c 'cd /opt/modsecurity-crs/lua-scripts/ml-model && make'")
     restart(c)
 
@@ -298,29 +299,27 @@ def ml_rebuild(c):
 @task(help={
     'name': 'decision_tree | random_forest'
 })
-def ml_update(c, name='decision_tree'):
+def ml_update(c):
     '''
     Copy new model code and rebuild
     '''
+    change_dir()
     from tools.ml_util.export_model import export_all
 
     export_all()
 
-    if name not in ['decision_tree', 'random_forest']:
-        debug("Model name must be: decision_tree | random_forest")
-        return
+    for name in ['decision_tree', 'random_forest']:
+        debug(f"Update model {name}")
+        try:
+            with open(f"./tools/ml_util/output/{name}.c", "r") as fd:
+                model_C_code = fd.read()
 
-    debug(f"Update model {name}")
-
-    try:
-        with open(f"./tools/ml_util/output/{name}.c", "r") as fd:
-            model_C_code = fd.read()
-
-        output_C_code = f'''
+            output_C_code = f'''
 {model_C_code}
 
-#define N_FEAFURES 161
-#define STR(s) #s
+#define N_FEAFURES 159
+#define STR_INDIR(s) #s
+#define STR(s) STR_INDIR(s)
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -367,18 +366,18 @@ int luaopen_{name}(lua_State *L) {{
     return 0;
 }}
 '''
-        with open(f"./openresty/modsecurity-crs/lua-scripts/ml-model/{name}.c", "w+") as fd:
-            fd.write(output_C_code)
+            with open(f"./openresty/modsecurity-crs/lua-scripts/ml-model/{name}.c", "w+") as fd:
+                fd.write(output_C_code)
 
-    except Exception as e:
-        debug("Failed to update model")
-        debug(e)
-    
+        except Exception as e:
+            debug("Failed to update model")
+            debug(e)
+        
     ml_rebuild(c)
 
 @task
 def pull_drive(c):
     change_dir("ml-model")
     c.run("rclone copy drive:/project/waf/train.ipynb .")
-    c.run("rclone copy drive:/project/waf/saved-models .")
-    change_dir()
+    c.run("rclone copy drive:/project/waf/saved-models ./saved-models")
+    c.run("rclone copy drive:/project/waf/images ./images")

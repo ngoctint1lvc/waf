@@ -1,0 +1,63 @@
+version: "3.7"
+services:
+  openresty:
+    container_name: openresty-waf
+    build:
+      context: ./openresty
+      dockerfile: Dockerfile.prod
+    environment:
+      MONGODB_SERVER: "${MONGODB_SERVER}"
+      MONGODB_USER: "${MONGO_INITDB_ROOT_USERNAME}"
+      MONGODB_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+      COLLECTION_PREFIX: "${COLLECTION_PREFIX}"
+      DEBUG: "${DEBUG}"
+    volumes:
+      - "./openresty/supervisor:/etc/supervisor"
+      - "./openresty/nginx/conf:/usr/local/openresty/nginx/conf"
+      - "./openresty/nginx/lua-nginx:/usr/local/openresty/nginx/lua-nginx"
+      - "./openresty/nginx/html:/usr/local/openresty/nginx/html"
+      - "./openresty/nginx/ssl:/usr/local/openresty/nginx/ssl"
+      - "./openresty/modsecurity/modsecurity.conf:/etc/modsecurity/modsecurity.conf"
+      - "./openresty/modsecurity-crs:/opt/modsecurity-crs"
+      - "./openresty/openresty-1.15.8.3:/root/openresty"
+      - "./openresty/modsecurity:/opt/modsecurity"
+      - "./openresty/modsecurity-nginx:/opt/modsecurity-nginx"
+      - "./openresty/run.sh:/run.sh"
+    restart: always
+    dns: 1.1.1.1
+  log-db:
+    image: "mongo"
+    container_name: waf-log-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+    volumes:
+      - "log-db:/data/db"
+    restart: always
+  log-db-viewer:
+    image: mongo-express
+    ports:
+      - 127.0.0.1:8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: "${MONGODB_SERVER}"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+      ME_CONFIG_BASICAUTH_USERNAME: "${MONGO_EXPRESS_USERNAME}"
+      ME_CONFIG_BASICAUTH_PASSWORD: "${MONGO_EXPRESS_PASSWORD}"
+    restart: always
+  proxy-server:
+    build:
+      context: ./proxy-server
+    volumes:
+      - "./proxy-server/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf"
+      - "./proxy-server/supervisor:/etc/supervisor"
+    cap_add:
+      - NET_ADMIN
+    restart: always
+    depends_on:
+      - openresty
+    ports:
+      - "80:80"
+volumes:
+  dvwa-db:
+  log-db:

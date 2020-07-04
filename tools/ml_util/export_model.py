@@ -13,15 +13,15 @@ def export_all():
     if not os.path.exists(output_path):
         os.mkdir(output_path)
 
-    with open(os.path.join(ml_model_path, "./saved-models/decision_tree_model.pickle"), "rb") as fd:
-        model = pickle.load(fd)
+    with open(os.path.join(ml_model_path, "./saved-models/decision_tree_model.pickle"), "rb") as fd_model:
+        model = pickle.load(fd_model)
 
         with open(os.path.join(output_path, "decision_tree.c"), "w") as fd:
             porter = Porter(model, language='C')
             fd.write(porter.export(embed_data=True))
 
-    with open(os.path.join(ml_model_path, "./saved-models/random_forest_model.pickle"), "rb") as fd:
-        model = pickle.load(fd)
+    with open(os.path.join(ml_model_path, "./saved-models/random_forest_model.pickle"), "rb") as fd_model:
+        model = pickle.load(fd_model)
 
         with open(os.path.join(output_path, "random_forest.c"), "w") as fd:
             porter = Porter(model, language='C')

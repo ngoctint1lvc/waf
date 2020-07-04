@@ -11,9 +11,38 @@ To build and run this project, you must install docker and docker-compose first.
 - https://docs.docker.com/get-docker/
 - https://docs.docker.com/compose/install/
 
-### Installing
+## Deployment
+Clone and init submodule
+```
+git clone https://github.com/ngoctint1lvc/waf.git
+cd waf/
+git submodule update --init --recursive
+```
 
-TODO
+Create `.env` file from `.env.example`
+```conf
+MONGODB_SERVER=log-db
+MONGO_INITDB_ROOT_USERNAME=
+MONGO_INITDB_ROOT_PASSWORD=
+DEBUG=1
+MONGO_EXPRESS_USERNAME=
+MONGO_EXPRESS_PASSWORD=
+COLLECTION_PREFIX=test
+```
+
+Add your certificate and private key in `openresty/nginx/ssl` folder
+```
+./openresty/nginx/ssl
+├── localhost-key.pem
+└── localhost.pem
+```
+
+Start all services
+```
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+Redirect all traffic to http proxy server at port 80
 
 ### How to develop
 
@@ -34,26 +63,6 @@ Start all containers
 ```
 docker-compose up -d
 ```
-
-Using `dev.py` script to for development (only work on ubuntu linux)
-```bash
-> python dev.py
-Command list:
-init
-init-terminal
-reload
-attack
-log
-test [url]
-gen-ssl
-rebuild-modsec
-update-dns
-restart
-```
-
-## Deployment
-TODO
-
 
 ## Authors
 
