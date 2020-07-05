@@ -1,28 +1,19 @@
 <html>
-<head>
-  <title>Error happened</title>
-</head>
-<body>
-<h1>403 Forbidden</h1>
-</body>
+    <head>
+        <title>Blocked by @nt</title>
+        <style>
+          body {
+            text-align: center;
+          }
 
-<script>
-  var cookie = getCookie("uid");
-  document.querySelector("h1").innerText = document.querySelector("h1").innerText + " by " + cookie;
-  function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return "";
-  }
-</script>
+          #logo {
+            height: 80vh;
+          }
+        </style>
+    </head>
+    <body>
+        <h1>403 Forbidden</h1>
+        <h2>You have been blocked!</h2>
+        <img id="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/865px-Tux.svg.png">
+    </body>
 </html>

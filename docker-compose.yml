@@ -7,7 +7,10 @@ services:
       dockerfile: Dockerfile
     volumes:
       - "./openresty/supervisor:/etc/supervisor"
-      - "./openresty/nginx:/usr/local/openresty/nginx"
+      - "./openresty/nginx/conf:/usr/local/openresty/nginx/conf"
+      - "./openresty/nginx/lua-nginx:/usr/local/openresty/nginx/lua-nginx"
+      - "./openresty/nginx/html:/usr/local/openresty/nginx/html"
+      - "./openresty/nginx/ssl:/usr/local/openresty/nginx/ssl"
       - "./openresty/modsecurity/modsecurity.conf:/etc/modsecurity/modsecurity.conf"
       - "./openresty/modsecurity-crs:/opt/modsecurity-crs"
       - "./openresty/openresty-1.15.8.3:/root/openresty"

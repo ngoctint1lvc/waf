@@ -25,6 +25,9 @@ services:
       - "./openresty/run.sh:/run.sh"
     restart: always
     dns: 1.1.1.1
+    ports:
+      - "80:80"
+      - "443:443"
   log-db:
     image: "mongo"
     container_name: waf-log-db
@@ -57,7 +60,7 @@ services:
     depends_on:
       - openresty
     ports:
-      - "80:80"
+      - "8080:80"
 volumes:
   dvwa-db:
   log-db:
