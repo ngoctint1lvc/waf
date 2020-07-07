@@ -1,0 +1,13 @@
+[
+    {
+        "url": "/vulnerabilities/xss_r/",
+        "payloadFile": "../data/xss-attack.txt",
+        "type": "Xss reflected",
+        "testLocation": {
+            "selector": "input[name=name]",
+            "submit": "input[type=submit]"
+        },
+        "constValues": [],
+        "isAttack": true
+    }
+]

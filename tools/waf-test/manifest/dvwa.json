@@ -1,0 +1,57 @@
+[
+    {
+        "url": "/vulnerabilities/sqli/",
+        "payloadFile": "../data/sqli-attack.txt",
+        "type": "Sql injection",
+        "testLocation": {
+            "selector": "input[name=id]",
+            "submit": "input[type=submit]"
+        },
+        "constValues": []
+    },
+    {
+        "url": "/vulnerabilities/exec/",
+        "payloadFile": "../data/cmdi-attack.txt",
+        "type": "Command injection",
+        "testLocation": {
+            "selector": "input[name=ip]",
+            "submit": "input[type=submit]"
+        },
+        "constValues": []
+    },
+    {
+        "url": "/vulnerabilities/xss_r/",
+        "payloadFile": "../data/xss-attack.txt",
+        "type": "Xss",
+        "testLocation": {
+            "selector": "input[name=name]",
+            "submit": "input[type=submit]"
+        },
+        "constValues": []
+    },
+    {
+        "url": "/vulnerabilities/sqli/",
+        "payloadFile": "../data/sqli-attack-generic.txt",
+        "type": "Sql injection generic",
+        "testLocation": {
+            "selector": "input[name=id]",
+            "submit": "input[type=submit]"
+        },
+        "constValues": []
+    },
+    {
+        "url": "/vulnerabilities/xss_s/",
+        "payloadFile": "../data/xss-attack-generic.txt",
+        "type": "Xss generic",
+        "testLocation": {
+            "selector": "textarea[name=mtxMessage]",
+            "submit": "input[type=submit]"
+        },
+        "constValues": [
+            {
+                "selector": "input[name=txtName]",
+                "value": "something"
+            }
+        ]
+    }
+]

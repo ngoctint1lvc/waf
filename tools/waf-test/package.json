@@ -1,0 +1,30 @@
+{
+  "name": "waf-test",
+  "version": "1.0.0",
+  "description": "Web security testing tool",
+  "main": "./bin/waf-test",
+  "scripts": {
+    "dvwa": "node waf-test.js browser https://verichains.tech -v -c ./manifest/dvwa.json --cookie 'security=low'",
+    "dvwa:sequence": "node waf-test.js browser https://test.acbpro.com -v -c ./manifest/dvwa.json --no-reset --cookie 'security=low'",
+    "http": "node waf-test.js raw-http http://test.acbpro.com -v -c ./manifest/http-all.json"
+  },
+  "bin": {
+    "waf-test": "./bin/waf-test"
+  },
+  "author": "Tran Ngoc Tin",
+  "license": "MIT",
+  "dependencies": {
+    "@dagrejs/graphlib": "^2.1.4",
+    "chalk": "^3.0.0",
+    "cookie": "^0.4.0",
+    "csv-writer": "^1.5.0",
+    "dotenv": "^8.2.0",
+    "n-readlines": "^1.0.0",
+    "node-fetch": "^2.6.0",
+    "pretty": "^2.0.0",
+    "puppeteer": "^2.0.0",
+    "puppeteer-extra": "^3.1.9",
+    "puppeteer-extra-plugin-stealth": "^2.4.9",
+    "yargs": "^15.0.2"
+  }
+}
