@@ -1,0 +1,335 @@
+meta:
+  author: Christoph Hansen
+  description: None
+  enabled: true
+  name: 942490.yaml
+tests:
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: var=%22%60%20%2A%20123
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-1
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: ''' '', 10'
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-2
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: ''''', '''', '''', '''', '''', '''', '''', '''', 13'
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-3
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: '`>65'
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-4
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay='1001'='10
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-5
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: '"2562*23'
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-6
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay=":["00
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-7
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay=`>6fbdec2
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-8
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay='][0]]), strtolower($b[$GLOBALS['
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-9
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay=', 2, 1
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-10
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: '`>9e7'
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-11
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay=":"65
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-12
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay='\2nq5
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-13
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay=` < 0) AND `
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-14
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay='0:0:6
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-15
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: '":60'
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-16
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay=">%5 - type_submit_reset_5
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-17
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: '":35'
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-18
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay='3085'='30
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-19
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: '":"[0,\x22'
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-20
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: pay='16/17
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-21
+- desc: classic SQL injection probings 3/3
+  stages:
+  - stage:
+      input:
+        data: '";}7b6'
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942490-22

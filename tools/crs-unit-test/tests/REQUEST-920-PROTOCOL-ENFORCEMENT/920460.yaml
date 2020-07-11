@@ -1,0 +1,48 @@
+meta:
+  author: csanders-git
+  description: Description
+  enabled: true
+  name: 920460.yaml
+tests:
+- stages:
+  - stage:
+      input:
+        data: file=cat+/etc/\passw\d
+        dest_addr: nginx.test
+        headers:
+          Accept: '*/*'
+          Content-Length: 22
+          Content-Type: application/x-www-form-urlencoded
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        method: POST
+        port: 80
+        stop_magic: true
+        uri: /
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920460-1
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        port: 80
+        uri: /?file=cat+/etc/pa\ssw\d
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920460-2
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        port: 80
+        uri: /?file=\c
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920460-3

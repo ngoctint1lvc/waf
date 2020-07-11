@@ -1,0 +1,36 @@
+meta:
+  author: Christian S.J. Peron, Federico G. Schwindt
+  description: US-ASCII Malformed Encoding XSS Filter
+  enabled: true
+  name: 941310.yaml
+tests:
+- desc: Positive test using single byte
+  stages:
+  - stage:
+      input:
+        data: var=\xbcscript\xbealert(\xa2XSS\xa2)\xbc/script\xbe
+        dest_addr: nginx.test
+        headers:
+          Content-type: us-ascii
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+      output:
+        response_contains: 403 Forbidden
+  test_title: 941310-1
+- desc: Positive test using utf-8
+  stages:
+  - stage:
+      input:
+        data: var=\xc2\xbcscript\xc2\xbealert(\xc2\xa2XSS\xc2\xa2)\xc2\xbc/script\xc2\xbe
+        dest_addr: nginx.test
+        headers:
+          Content-type: us-ascii
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+      output:
+        response_contains: 403 Forbidden
+  test_title: 941310-2

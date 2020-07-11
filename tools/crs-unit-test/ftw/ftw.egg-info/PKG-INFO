@@ -1,0 +1,12 @@
+Metadata-Version: 1.1
+Name: ftw
+Version: 1.2.0
+Summary: Framework for Testing WAFs
+Home-page: https://www.github.com/crs-support/ftw
+Author: Chaim Sanders, Zack Allen
+Author-email: zma4580@gmail.com, chaim.sanders@gmail.com
+License: UNKNOWN
+Download-URL: https://github.com/crs-support/ftw/tarball/1.2.0
+Description: UNKNOWN
+Keywords: waf
+Platform: UNKNOWN

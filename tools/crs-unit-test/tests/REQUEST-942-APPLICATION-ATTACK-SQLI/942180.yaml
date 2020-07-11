@@ -1,0 +1,36 @@
+meta:
+  author: Christian S.J. Peron
+  description: None
+  enabled: true
+  name: 942180.yaml
+tests:
+- desc: basic SQL authentication bypass
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: GET
+        port: 80
+        uri: /?var=3%27%20%27%201
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942180-1
+- desc: XSS test based on portswigger XSS cheatsheet
+  stages:
+  - stage:
+      input:
+        data: javascript:"/*'/*`/*--></noscript></title></textarea></style></template></noembed></script><html
+          "
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942180-2

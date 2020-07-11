@@ -1,0 +1,20 @@
+meta:
+  author: 4v3r9
+  description: Test to trigger 941101
+  enabled: true
+  name: 941101.yaml
+tests:
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          Referer: www.github.com<script><img><iframe>
+          User-Agent: ModSecurity CRS 3 Tests
+        method: GET
+        port: 80
+        uri: /
+      output:
+        response_contains: 403 Forbidden
+  test_title: 941101-1

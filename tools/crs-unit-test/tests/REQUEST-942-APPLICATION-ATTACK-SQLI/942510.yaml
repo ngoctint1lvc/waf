@@ -1,0 +1,21 @@
+meta:
+  author: Franziska Buehler
+  description: None
+  enabled: true
+  name: 942510.yaml
+tests:
+- desc: 'SQLi bypass detected: backticks'
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        method: GET
+        port: 80
+        uri: /?`bla`
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942510-1

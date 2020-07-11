@@ -1,0 +1,17 @@
+meta:
+  author: csanders-git
+  description: Description
+  enabled: true
+  name: 920311.yaml
+tests:
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Accept: ''
+          Host: nginx.test
+        port: 80
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920311-1

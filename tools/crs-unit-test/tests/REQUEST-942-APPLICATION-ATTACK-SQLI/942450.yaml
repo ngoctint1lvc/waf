@@ -1,0 +1,51 @@
+meta:
+  author: William Woodson
+  description: None
+  enabled: true
+  name: 942450.yaml
+tests:
+- desc: SQL Hex Encoding
+  stages:
+  - stage:
+      input:
+        data: var=%5c0xf00dsdfdsa
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942450-1
+- desc: SQL Hex Encoding
+  stages:
+  - stage:
+      input:
+        data: var=concat%280x223e3c62723e%2Cversion%28%29%2C0x3c696d67207372633d22%29
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942450-2
+- desc: SQL Hex Encoding
+  stages:
+  - stage:
+      input:
+        data: var=select%200x616263
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 942450-3

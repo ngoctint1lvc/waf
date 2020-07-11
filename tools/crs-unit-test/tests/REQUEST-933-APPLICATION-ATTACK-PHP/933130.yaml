@@ -1,0 +1,45 @@
+meta:
+  author: csanders-git
+  description: Tests functionality of 933130
+  enabled: true
+  name: 933130.yaml
+tests:
+- desc: Trigger a basic request
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        port: 80
+        uri: /?x=$_SERVER['test'];
+      output:
+        response_contains: 403 Forbidden
+  test_title: 933130-2
+- desc: SERVER request URLEncoded
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        port: 80
+        uri: /?x=$_%53ERVER['test'];
+      output:
+        response_contains: 403 Forbidden
+  test_title: 933130-4
+- desc: SERVER request URLEncoded
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        port: 80
+        uri: /?%24_COOKIE=value;
+      output:
+        response_contains: 403 Forbidden
+  test_title: 933130-5

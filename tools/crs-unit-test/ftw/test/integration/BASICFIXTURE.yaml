@@ -1,0 +1,98 @@
+---
+  meta:
+    author: "Chaim, Federico G. Schwindt"
+    enabled: true
+    name: "BASICFIXTURE.yaml"
+    description: Test various things
+  tests:
+    -
+      test_title: Test UTF-8 characters
+      stages:
+        -
+          stage:
+            input:
+              dest_addr: www.example.com
+              headers:
+                User-Agent: Foo
+                Host: www.example.com
+              uri: /?q=映像研には手を出すな！
+            output:
+              status: 200
+    -
+      test_title: Test disabled rule
+      enabled: false
+      stages:
+        -
+          stage:
+            input:
+              dest_addr: www.example.com
+              headers:
+                User-Agent: Foo
+                Host: www.example.com
+            output:
+              status: 500
+    -
+      test_title: Test expect_error
+      stages:
+        -
+          stage:
+            input:
+              dest_addr: www.example.com
+              headers:
+                User-Agent: Foo
+                Host: www.example.com
+                Content-Length: 100
+            output:
+              expect_error: true
+    -
+      test_title: Test multipart using list
+      stages:
+        -
+          stage:
+            input:
+              dest_addr: www.example.com
+              method: POST
+              headers:
+                User-Agent: Foo
+                Host: www.example.com
+                Content-Type: multipart/form-data; boundary=--------397236876
+              data:
+                - '----------397236876'
+                - 'Content-Disposition: form-data; name="text";'
+                - ''
+                - 'test default'
+                - '----------397236876'
+                - 'Content-Disposition: form-data; name="file1"; filename="a.txt"'
+                - 'Content-Type: text/plain'
+                - ''
+                - 'Content of a.txt.'
+                - ''
+                - '----------397236876--'
+            output:
+              status: 200
+    -
+      test_title: Test response_contains with body
+      stages:
+        -
+          stage:
+            input:
+              dest_addr: www.example.com
+              headers:
+                User-Agent: Foo
+                Host: www.example.com
+            output:
+              status: 200
+              response_contains: is for use in illustrative
+    -
+      test_title: Test response_contains with headers
+      stages:
+        -
+          stage:
+            input:
+              dest_addr: www.example.com
+              headers:
+                User-Agent: Foo
+                Host: www.example.com
+            output:
+              status: 200
+              response_contains: 'Content-Type: text/html'

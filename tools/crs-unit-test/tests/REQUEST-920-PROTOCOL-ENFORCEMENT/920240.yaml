@@ -1,0 +1,62 @@
+meta:
+  author: csanders-git
+  description: Description
+  enabled: true
+  name: 920240.yaml
+tests:
+- stages:
+  - stage:
+      input:
+        data: x=new %w20$
+        dest_addr: nginx.test
+        headers:
+          Content-Length: 11
+          Content-Type: application/x-www-form-urlencoded
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        method: POST
+        port: 80
+        stop_magic: true
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920240-1
+- stages:
+  - stage:
+      input:
+        data: param=%1G
+        dest_addr: nginx.test
+        headers:
+          Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+          Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+          Accept-Language: en-us,en;q=0.5
+          Content-Length: '9'
+          Content-Type: application/x-www-form-urlencoded
+          Host: nginx.test
+          Keep-Alive: '300'
+          Proxy-Connection: keep-alive
+          User-Agent: ModSecurity CRS 3 Tests
+        method: POST
+        port: 80
+        stop_magic: true
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920240-5
+- stages:
+  - stage:
+      input:
+        data: param=%7%6F%6D%65%74%65%78%74%5F%31%32%33%
+        dest_addr: nginx.test
+        headers:
+          Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+          Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+          Accept-Language: en-us,en;q=0.5
+          Content-Type: application/x-www-form-urlencoded
+          Host: nginx.test
+          Keep-Alive: '300'
+          Proxy-Connection: keep-alive
+          User-Agent: ModSecurity CRS 3 Tests
+        method: POST
+        port: 80
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920240-6

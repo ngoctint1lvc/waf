@@ -1,0 +1,35 @@
+meta:
+  author: Christian S.J. Peron
+  description: None
+  enabled: true
+  name: 941270.yaml
+tests:
+- desc: IE XSS Filters
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: GET
+        port: 80
+        uri: /?var=%3clink%20%2f%20asdf%20href%20%20%2f%3d%20
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 941270-1
+- desc: XSS test based on portswigger XSS cheatsheet
+  stages:
+  - stage:
+      input:
+        data: payload=<link href="xss.js" rel=stylesheet type="text/javascript"></a>
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+        method: POST
+        port: 80
+        uri: /
+        version: HTTP/1.0
+      output:
+        response_contains: 403 Forbidden
+  test_title: 941270-2

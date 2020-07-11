@@ -1,0 +1,21 @@
+meta:
+  author: csanders-git
+  description: Tests for 920202
+  enabled: true
+  name: 920202.yaml
+tests:
+- desc: This should FAIL with rule 920202 (PL4)
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          Range: bytes=10-11, 20-21, 30-31, 40-41, 50-51, 60-61
+          User-Agent: ModSecurity CRS 3 Tests
+        method: GET
+        port: 80
+        uri: /index.pdf
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920202-1

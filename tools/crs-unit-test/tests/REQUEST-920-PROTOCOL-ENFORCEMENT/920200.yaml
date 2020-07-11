@@ -1,0 +1,91 @@
+meta:
+  author: csanders-git
+  description: Description
+  enabled: true
+  name: 920200.yaml
+tests:
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          Range: bytes=1-10,11-20,21-30,31-40,41-50,51-60
+          User-Agent: ModSecurity CRS 3 Tests
+        port: 80
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920200-1
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          Request-Range: bytes=5-0,1-1,2-2,3-3,4-4,5-5,6-6,7-7,8-8,9-9,10-10,11-11
+          User-Agent: ModSecurity CRS 3 Tests
+        port: 80
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920200-2
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          Range: bytes=-10,-, 21-30,31-40,41-50,51-500,
+          User-Agent: 'ModSecurity CRS 3 Tests #FP'
+        port: 80
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920200-4
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          Range: bytes=1-,11-20, 21-30,31-40,41-50,51-500
+          User-Agent: 'ModSecurity CRS 3 Tests #FP'
+        port: 80
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920200-5
+- desc: 'Range: Too many fields (920200) from old modsec regressions'
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+          Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+          Accept-Language: en-us,en;q=0.5
+          Connection: close
+          Host: nginx.test
+          Keep-Alive: '300'
+          Proxy-Connection: keep-alive
+          Range: bytes=0-,5-0,5-1,5-2,5-3,5-4,5-5,5-6,5-7,5-8,5-9,5-10,5-11,5-12,5-13,5-14,5-15
+          User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv
+        method: GET
+        port: 80
+        uri: /
+        version: HTTP/1.1
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920200-6
+- desc: This should FAIL with rule 920200 (PL2)
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          Range: bytes=10-11, 20-21, 30-31, 40-41, 50-51, 60-61
+          User-Agent: ModSecurity CRS 3 Tests
+        method: GET
+        port: 80
+        uri: /index.html
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920200-8

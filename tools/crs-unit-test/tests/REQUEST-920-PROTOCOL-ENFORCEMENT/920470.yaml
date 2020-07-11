@@ -1,0 +1,46 @@
+meta:
+  author: lifeforms
+  description: Content-Type header format checks
+  enabled: true
+  name: 920470.yaml
+tests:
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Content-Length: 0
+          Content-Type: '%{(#nike=''multipart/form-data'').(#dm=@ognl'
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        port: 80
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920470-1
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Content-Length: 0
+          Content-Type: text/plain; charset="UTF-8"; garbage
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        port: 80
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920470-2
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Content-Length: 0
+          Content-Type: multipart/form-data; boundary=  test_data_123456
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        method: POST
+        port: 80
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920470-12

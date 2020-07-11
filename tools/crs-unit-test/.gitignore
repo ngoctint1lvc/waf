@@ -1,0 +1,5 @@
+output.csv
+outputs
+summary.txt
+__pycache__
+.pytest_cache

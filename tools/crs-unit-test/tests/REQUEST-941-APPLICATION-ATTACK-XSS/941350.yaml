@@ -1,0 +1,21 @@
+meta:
+  author: fgsch
+  description: Test rule 941350
+  enabled: true
+  name: 941350.yaml
+tests:
+- desc: GH issue
+  stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Accept: '*/*'
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        method: GET
+        port: 80
+        uri: /xx?id=%25252bADw-script%25252bAD4-
+      output:
+        response_contains: 403 Forbidden
+  test_title: 941350-1

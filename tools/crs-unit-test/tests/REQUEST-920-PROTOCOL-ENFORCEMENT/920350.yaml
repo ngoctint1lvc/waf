@@ -1,0 +1,34 @@
+meta:
+  author: csanders-git
+  description: Description
+  enabled: true
+  name: 920350.yaml
+tests:
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        method: GET
+        port: 80
+        protocol: http
+        uri: /
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920350-1
+- stages:
+  - stage:
+      input:
+        dest_addr: nginx.test
+        headers:
+          Host: nginx.test
+          User-Agent: ModSecurity CRS 3 Tests
+        method: GET
+        port: 80
+        protocol: http
+        uri: /
+      output:
+        response_contains: 403 Forbidden
+  test_title: 920350-3

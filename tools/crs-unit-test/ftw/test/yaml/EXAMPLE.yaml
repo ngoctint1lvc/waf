@@ -1,0 +1,37 @@
+---
+  meta: 
+    author: "Zack"
+    enabled: true
+    name: "EXAMPLE.yaml"
+    description: "Description"
+  tests: 
+    - 
+      test_title: 1234
+      stages: 
+        - 
+          stage: 
+            input: 
+              method: "GET"
+              port: 80
+              headers: 
+                  User-Agent: "Foo"
+                  Host: "localhost"
+              protocol: "http"
+              uri: "/"
+            output: 
+              status: 200
+    - 
+      test_title: 1235
+      stages: 
+        - 
+          stage: 
+            input: 
+              method: "GET"
+              port: 80
+              headers: 
+                  User-Agent: "Foo"
+                  Host: "localhost"
+              protocol: "http"
+              uri: "/fail.html"
+            output: 
+              status: 404
