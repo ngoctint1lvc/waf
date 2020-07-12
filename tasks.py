@@ -341,7 +341,7 @@ static int l_predict(lua_State *L) {{
 
     luaL_checktype(L, 1, LUA_TTABLE);
     int input_table_length = lua_objlen(L, 1);
-    printf("Input features: %d\\n", input_table_length);
+    // printf("Input features: %d\\n", input_table_length);
 
     if (input_table_length != N_FEAFURES) {{
         lua_pushstring(L, "Wrong number of features (required " STR(N_FEAFURES) " features)");

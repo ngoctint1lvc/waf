@@ -170,6 +170,7 @@ function should_block(m, rules)
     local request_method = m.getvar("REQUEST_METHOD")
 
     local features_arr = {}
+
     for i, v in ipairs(features) do
         for k, rule in pairs(rules) do
             if tostring(rule["id"]) == v then
@@ -183,10 +184,11 @@ function should_block(m, rules)
         else
             features_arr[i] = 0
         end
-
-        -- util.waf_debug(m, "ml_feature", v .. " = " .. features_arr[i])
         
         ::continue::
+        if features_arr[i] == 1 then
+            util.waf_debug(m, "ml_feature", v .. " = " .. features_arr[i])
+        end
     end
 
     -- util.waf_debug(m, "features", features)
@@ -198,6 +200,24 @@ function should_block(m, rules)
     --     return ml_model.predict(features_arr)
     -- end)
     local ml_result = ml_model.predict(features_arr)
+
+    if ml_result > 0 then
+        local is_false_positive = true
+
+        -- all features is 0 except for request_method
+        for i=1, #features do
+            if features_arr[i] == 1 and features[i]:sub(0, #"request_method") ~= "request_method" then
+                is_false_positive = false
+                break
+            end
+        end
+        
+        if is_false_positive then
+            util.debug(m, "False positive in ml model")
+            ml_result = 0
+        end
+    end
+
     -- util.waf_debug(m, "ok", ok)
     util.waf_debug(m, "ml_result", ml_result)
     return ml_result > 0

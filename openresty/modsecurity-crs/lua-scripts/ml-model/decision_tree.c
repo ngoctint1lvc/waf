@@ -13,7 +13,7 @@ int predict(float features[159]) {
                 if (features[45] <= 0.5) {
                     if (features[89] <= 0.5) {
                         if (features[11] <= 0.5) {
-                            if (features[158] <= 0.5) {
+                            if (features[75] <= 0.5) {
                                 if (features[133] <= 0.5) {
                                     if (features[149] <= 0.5) {
                                         if (features[68] <= 0.5) {
@@ -123,35 +123,35 @@ int predict(float features[159]) {
                                         classes[1] = 104; 
                                     }
                                 } else {
-                                    if (features[64] <= 0.5) {
+                                    if (features[35] <= 0.5) {
                                         if (features[106] <= 0.5) {
                                             if (features[68] <= 0.5) {
                                                 if (features[77] <= 0.5) {
                                                     if (features[148] <= 0.5) {
                                                         if (features[132] <= 0.5) {
-                                                            if (features[62] <= 0.5) {
-                                                                if (features[33] <= 0.5) {
-                                                                    if (features[66] <= 0.5) {
-                                                                        if (features[102] <= 0.5) {
-                                                                            if (features[114] <= 0.5) {
-                                                                                if (features[134] <= 0.5) {
+                                                            if (features[66] <= 0.5) {
+                                                                if (features[102] <= 0.5) {
+                                                                    if (features[114] <= 0.5) {
+                                                                        if (features[134] <= 0.5) {
+                                                                            if (features[62] <= 0.5) {
+                                                                                if (features[33] <= 0.5) {
                                                                                     classes[0] = 6696; 
                                                                                     classes[1] = 111; 
                                                                                 } else {
                                                                                     classes[0] = 0; 
-                                                                                    classes[1] = 4; 
+                                                                                    classes[1] = 2; 
                                                                                 }
                                                                             } else {
-                                                                                classes[0] = 671; 
-                                                                                classes[1] = 0; 
+                                                                                classes[0] = 0; 
+                                                                                classes[1] = 2; 
                                                                             }
                                                                         } else {
                                                                             classes[0] = 0; 
-                                                                            classes[1] = 2; 
+                                                                            classes[1] = 4; 
                                                                         }
                                                                     } else {
-                                                                        classes[0] = 0; 
-                                                                        classes[1] = 2; 
+                                                                        classes[0] = 671; 
+                                                                        classes[1] = 0; 
                                                                     }
                                                                 } else {
                                                                     classes[0] = 0; 
@@ -162,7 +162,7 @@ int predict(float features[159]) {
                                                                 classes[1] = 2; 
                                                             }
                                                         } else {
-                                                            if (features[91] <= 0.5) {
+                                                            if (features[69] <= 0.5) {
                                                                 classes[0] = 1263; 
                                                                 classes[1] = 0; 
                                                             } else {
@@ -172,7 +172,7 @@ int predict(float features[159]) {
                                                         }
                                                     } else {
                                                         if (features[114] <= 0.5) {
-                                                            if (features[119] <= 0.5) {
+                                                            if (features[23] <= 0.5) {
                                                                 classes[0] = 0; 
                                                                 classes[1] = 8; 
                                                             } else {
@@ -193,7 +193,7 @@ int predict(float features[159]) {
                                                 classes[1] = 79; 
                                             }
                                         } else {
-                                            if (features[15] <= 0.5) {
+                                            if (features[23] <= 0.5) {
                                                 classes[0] = 0; 
                                                 classes[1] = 104; 
                                             } else {
@@ -233,7 +233,7 @@ int predict(float features[159]) {
                                                     } else {
                                                         if (features[148] <= 0.5) {
                                                             if (features[139] <= 0.5) {
-                                                                if (features[6] <= 0.5) {
+                                                                if (features[68] <= 0.5) {
                                                                     if (features[132] <= 0.5) {
                                                                         classes[0] = 2; 
                                                                         classes[1] = 1; 
@@ -280,7 +280,7 @@ int predict(float features[159]) {
                             }
                         }
                     } else {
-                        if (features[124] <= 0.5) {
+                        if (features[15] <= 0.5) {
                             classes[0] = 0; 
                             classes[1] = 300; 
                         } else {
@@ -300,7 +300,7 @@ int predict(float features[159]) {
                                     classes[1] = 0; 
                                 }
                             } else {
-                                if (features[9] <= 0.5) {
+                                if (features[27] <= 0.5) {
                                     classes[0] = 44; 
                                     classes[1] = 0; 
                                 } else {
@@ -447,8 +447,8 @@ int predict(float features[159]) {
                                                                 classes[0] = 0; 
                                                                 classes[1] = 17; 
                                                             } else {
-                                                                if (features[9] <= 0.5) {
-                                                                    if (features[68] <= 0.5) {
+                                                                if (features[51] <= 0.5) {
+                                                                    if (features[123] <= 0.5) {
                                                                         classes[0] = 23; 
                                                                         classes[1] = 0; 
                                                                     } else {
@@ -510,17 +510,17 @@ int predict(float features[159]) {
                                     classes[1] = 524; 
                                 } else {
                                     if (features[89] <= 0.5) {
-                                        if (features[77] <= 0.5) {
-                                            if (features[95] <= 0.5) {
+                                        if (features[33] <= 0.5) {
+                                            classes[0] = 0; 
+                                            classes[1] = 12; 
+                                        } else {
+                                            if (features[124] <= 0.5) {
                                                 classes[0] = 2; 
                                                 classes[1] = 0; 
                                             } else {
                                                 classes[0] = 0; 
                                                 classes[1] = 2; 
                                             }
-                                        } else {
-                                            classes[0] = 0; 
-                                            classes[1] = 12; 
                                         }
                                     } else {
                                         classes[0] = 0; 
@@ -529,7 +529,7 @@ int predict(float features[159]) {
                                 }
                             } else {
                                 if (features[77] <= 0.5) {
-                                    if (features[89] <= 0.5) {
+                                    if (features[136] <= 0.5) {
                                         classes[0] = 2; 
                                         classes[1] = 0; 
                                     } else {
@@ -556,7 +556,7 @@ int predict(float features[159]) {
                         classes[0] = 0; 
                         classes[1] = 6; 
                     } else {
-                        if (features[77] <= 0.5) {
+                        if (features[17] <= 0.5) {
                             classes[0] = 801; 
                             classes[1] = 0; 
                         } else {
@@ -641,7 +641,7 @@ static int l_predict(lua_State *L) {
 
     luaL_checktype(L, 1, LUA_TTABLE);
     int input_table_length = lua_objlen(L, 1);
-    printf("Input features: %d\n", input_table_length);
+    // printf("Input features: %d\n", input_table_length);
 
     if (input_table_length != N_FEAFURES) {
         lua_pushstring(L, "Wrong number of features (required " STR(N_FEAFURES) " features)");
