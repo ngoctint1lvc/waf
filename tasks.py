@@ -57,15 +57,20 @@ def ip(c):
 @task
 def dns_reload(c):
     openresty_ip = get_container_ip("openresty-waf")
-    domains = ['dvwa.test', 'nginx.test', 'openresty.docker']
-    config = '\n'.join(
-        [f'address=/{domain}/{openresty_ip}' for domain in domains])
+    dvwa_ip = get_container_ip("dvwa-test")
+    nginx_ip = get_container_ip("nginx-test")
+    mongodb_ip = get_container_ip("waf-log-db")
+    # domains = ['dvwa.test', 'nginx.test', 'openresty.docker']
+
+    config = f'''
+address=/openresty.docker/{openresty_ip}
+address=/dvwa.test/{dvwa_ip}
+address=/nginx.test/{nginx_ip}
+address=/mongo.docker/{mongodb_ip}
+'''
+
     c.run(
         f"sudo bash -c \"echo '{config}' > /etc/dnsmasq.d/docker-config.conf\"", pty=False)
-
-    mongodb_ip = get_container_ip("waf-log-db")
-    c.run(
-        f"sudo bash -c 'echo \"address=/mongo.docker/{mongodb_ip}\" >> /etc/dnsmasq.d/docker-config.conf'", pty=False)
 
     c.run("sudo systemctl restart dnsmasq", pty=False)
 
