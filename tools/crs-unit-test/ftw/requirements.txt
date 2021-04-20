@@ -6,7 +6,7 @@ IPy==0.83
 more-itertools==8.2.0
 packaging==20.3
 pluggy==0.13.1
-py==1.8.1
+py==1.10.0
 pyparsing==2.4.6
 pytest==5.4.1
 python-dateutil==2.6.0
